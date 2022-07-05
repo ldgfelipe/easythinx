@@ -25,14 +25,25 @@
       <li class="nav-item">
         <a class="nav-link" href="#">Preguntas Más Frecuentes</a>
       </li>
-     
+     @if(Auth::check())
+
+     <li class="nav-item">
+        <a class="nav-link" href="{{ url('/') }}/logout">logout</a>
+      </li>
+
+      @else
       <li class="nav-item">
-        <a class="nav-link" href="#">Iniciar Sesión</a>
+        <a class="nav-link" href="{{ url('/') }}/login">Iniciar Sesión</a>
+        
       </li>
 
       <li class="nav-item">
-        <a class="nav-link" href="#">Registro</a>
+        <a class="nav-link" href="{{ url('/') }}/register">Registro</a>
       </li>
+      
+      @endif
+
+     
     </ul>
   </div>
   </div>

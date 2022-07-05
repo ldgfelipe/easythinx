@@ -3,11 +3,12 @@
  * includes Vue and other libraries. It is a great starting point when
  * building robust, powerful web applications using Vue and Laravel.
  */
-
 require('./bootstrap');
-
 window.Vue = require('vue').default;
 import vuetify from './vuetify';
+
+
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -15,12 +16,12 @@ import vuetify from './vuetify';
  *
  * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
  */
-
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
-
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
-
+Vue.component('dashoardterminal', require('./components/dashoardTerminal.vue').default);
+Vue.component('componentearchivos', require('./components/componenteArchivos.vue').default);
+Vue.component('componentechat', require('./components/componenteChat.vue').default);
+Vue.component('componentetareas', require('./components/componenteTareas.vue').default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
