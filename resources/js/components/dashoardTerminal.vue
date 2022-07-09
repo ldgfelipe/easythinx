@@ -1,39 +1,18 @@
 <template>
     <div class="areadash">
         <v-row>
+            <v-col cols="12" md="8">
+                <componenteproyectos></componenteproyectos> 
+            </v-col>
+                <v-col cols="12" md="4"></v-col>
             <v-col cols="12" md="4" class="tabledata">
-
              <componentetareas></componentetareas>
-
             </v-col>
              <v-col cols="12" md="4" class="tabledata">
-
-                <v-card>
-                     <v-card-title class="grey ">
-                            Archivos 
-                      </v-card-title> 
-                    <v-card-text>
-
-
-
-                    </v-card-text>  
-                </v-card>
-
+                <componentearchivos></componentearchivos>
             </v-col>
-
              <v-col cols="12" md="4" class="tabledata">
-
-
-                <v-card>
-                     <v-card-title>
-                            Chat
-                     </v-card-title> 
-                    <v-card-text>
-
-
-
-                    </v-card-text>  
-                </v-card>
+                <componentechat></componentechat>
             </v-col>
         </v-row>
        

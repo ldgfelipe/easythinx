@@ -22,6 +22,7 @@ Vue.component('dashoardterminal', require('./components/dashoardTerminal.vue').d
 Vue.component('componentearchivos', require('./components/componenteArchivos.vue').default);
 Vue.component('componentechat', require('./components/componenteChat.vue').default);
 Vue.component('componentetareas', require('./components/componenteTareas.vue').default);
+Vue.component('componenteproyectos', require('./components/componenteProyectos.vue').default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
