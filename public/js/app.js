@@ -5386,11 +5386,62 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      adminproyect: false
+      addp: false,
+      adminproyect: false,
+      addproyect: {}
     };
+  },
+  methods: {
+    GuardarProyecto: function GuardarProyecto() {
+      fetch(this.url + "registraproyecto", {
+        method: 'POST',
+        // or 'PUT'
+        body: JSON.stringify(this.addproyect),
+        // data can be `string` or {object}!
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': this.csrf
+        }
+      }).then(function (res) {
+        return res.json();
+      })["catch"](function (error) {
+        return console.error('Error:', error);
+      }).then(function (response) {
+        return console.log('Success:', response);
+      });
+    }
+  },
+  props: {
+    csrf: {
+      "default": ""
+    },
+    url: {
+      "default": ""
+    }
   }
 });
 
@@ -5492,7 +5543,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({});
+//
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: {
+    csrf: {
+      "default": ""
+    },
+    url: {
+      "default": ""
+    }
+  }
+});
 
 /***/ }),
 
@@ -29145,12 +29206,21 @@ var render = function () {
                 "v-card-title",
                 { staticClass: "greenD white--text" },
                 [
-                  _vm._v("\n                    Administrador de Proyectos "),
+                  _vm._v(
+                    "\n                    Administrador de Proyectos \n\n                    "
+                  ),
                   _c("v-spacer"),
                   _vm._v(" "),
                   _c(
                     "v-btn",
-                    { staticClass: "white" },
+                    {
+                      staticClass: "white",
+                      on: {
+                        click: function ($event) {
+                          _vm.addp = true
+                        },
+                      },
+                    },
                     [
                       _c("v-icon", { staticClass: "greenD--text" }, [
                         _vm._v("mdi-plus"),
@@ -29158,6 +29228,7 @@ var render = function () {
                     ],
                     1
                   ),
+                  _vm._v(" "),
                   _c(
                     "v-btn",
                     { staticClass: "white" },
@@ -29181,7 +29252,85 @@ var render = function () {
                 1
               ),
               _vm._v(" "),
-              _c("v-card-text", [_c("v-data-table")], 1),
+              _c(
+                "v-card-text",
+                [
+                  _c("v-data-table"),
+                  _vm._v(" "),
+                  _c(
+                    "v-dialog",
+                    {
+                      attrs: { "max-width": "500" },
+                      model: {
+                        value: _vm.addp,
+                        callback: function ($$v) {
+                          _vm.addp = $$v
+                        },
+                        expression: "addp",
+                      },
+                    },
+                    [
+                      _c(
+                        "v-card",
+                        [
+                          _c("v-card-title", [
+                            _vm._v(
+                              "\n                            Registra Proyecto\n                        "
+                            ),
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "v-card-text",
+                            [
+                              _c("v-text-field", {
+                                attrs: {
+                                  outlined: "",
+                                  label: "Nombre del proyecto",
+                                },
+                                model: {
+                                  value: _vm.addproyect.nombre,
+                                  callback: function ($$v) {
+                                    _vm.$set(_vm.addproyect, "nombre", $$v)
+                                  },
+                                  expression: "addproyect.nombre",
+                                },
+                              }),
+                              _vm._v(" "),
+                              _c("v-textarea", {
+                                attrs: { outlined: "", label: "Descripción" },
+                                model: {
+                                  value: _vm.addproyect.descripcion,
+                                  callback: function ($$v) {
+                                    _vm.$set(_vm.addproyect, "descripcion", $$v)
+                                  },
+                                  expression: "addproyect.descripcion",
+                                },
+                              }),
+                              _vm._v(" "),
+                              _c(
+                                "v-btn",
+                                {
+                                  staticClass: "greenD white--text",
+                                  on: {
+                                    click: function ($event) {
+                                      return _vm.GuardarProyecto()
+                                    },
+                                  },
+                                },
+                                [_vm._v("Guardar")]
+                              ),
+                            ],
+                            1
+                          ),
+                        ],
+                        1
+                      ),
+                    ],
+                    1
+                  ),
+                ],
+                1
+              ),
             ],
             1
           ),
@@ -29346,7 +29495,11 @@ var render = function () {
           _c(
             "v-col",
             { attrs: { cols: "12", md: "8" } },
-            [_c("componenteproyectos")],
+            [
+              _c("componenteproyectos", {
+                attrs: { csrf: _vm.csrf, url: _vm.url },
+              }),
+            ],
             1
           ),
           _vm._v(" "),
@@ -29355,21 +29508,29 @@ var render = function () {
           _c(
             "v-col",
             { staticClass: "tabledata", attrs: { cols: "12", md: "4" } },
-            [_c("componentetareas")],
+            [
+              _c("componentetareas", {
+                attrs: { csrf: _vm.csrf, url: _vm.url },
+              }),
+            ],
             1
           ),
           _vm._v(" "),
           _c(
             "v-col",
             { staticClass: "tabledata", attrs: { cols: "12", md: "4" } },
-            [_c("componentearchivos")],
+            [
+              _c("componentearchivos", {
+                attrs: { csrf: _vm.csrf, url: _vm.url },
+              }),
+            ],
             1
           ),
           _vm._v(" "),
           _c(
             "v-col",
             { staticClass: "tabledata", attrs: { cols: "12", md: "4" } },
-            [_c("componentechat")],
+            [_c("componentechat", { attrs: { csrf: _vm.csrf, url: _vm.url } })],
             1
           ),
         ],

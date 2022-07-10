@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use \Illuminate\Http\Request;
+use App\Http\Controllers\ProyectoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,3 +33,6 @@ Route::get('/logout',function(Request $request){
     return redirect('/');
    
 });
+
+
+Route::post('/registraproyecto',[ProyectoController::class,'registraproyecto']);
