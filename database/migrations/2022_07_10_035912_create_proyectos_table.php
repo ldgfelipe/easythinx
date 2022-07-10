@@ -20,6 +20,7 @@ class CreateProyectosTable extends Migration
             $table->text('desc');
             $table->integer('status'); /// status 1.- Activo, 2.-Finalizado, 3.-Pendiente
             $table->text('notas');
+            
         });
     }
 
