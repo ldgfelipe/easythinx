@@ -4,8 +4,7 @@
 
     <div id="app">
         <v-app class="appdata">
-        
-            <dashoardterminal :csrf="'{{ csrf_token() }}'" :url="'{{env('APP_URL')}}'"></dashoardterminal>
+            <dashoardterminal :sesion="{{Auth::user()}}" :csrf="'{{ csrf_token() }}'" :url="'{{env('APP_URL')}}'"></dashoardterminal>
         </v-app>
     </div>
 @endsection

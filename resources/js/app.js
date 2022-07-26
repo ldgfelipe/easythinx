@@ -23,6 +23,8 @@ Vue.component('componentearchivos', require('./components/componenteArchivos.vue
 Vue.component('componentechat', require('./components/componenteChat.vue').default);
 Vue.component('componentetareas', require('./components/componenteTareas.vue').default);
 Vue.component('componenteproyectos', require('./components/componenteProyectos.vue').default);
+Vue.component('componenteiconos', require('./components/componenteIconos.vue').default);
+Vue.component('componenteperfil', require('./components/componentePerfil.vue').default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

@@ -16,11 +16,13 @@ class CreateProyectosTable extends Migration
         Schema::create('proyectos', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->longtext('id_create');
+            $table->longtext('id_collaborate');
             $table->string('nombre');
             $table->text('desc');
             $table->integer('status'); /// status 1.- Activo, 2.-Finalizado, 3.-Pendiente
             $table->text('notas');
-            
+
         });
     }
 

@@ -16,7 +16,7 @@
                                 @csrf
 
                                 <div class="row mb-12">
-                                  
+
 
                                     <div class="col-md-12">
                                         <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email"  placeholder="{{ __('Email Address') }}" autofocus>
@@ -30,7 +30,7 @@
                                 </div>
 
                                 <div class="row mb-12">
-                                
+
 
                                     <div class="col-md-12">
                                         <input id="password" type="password"  placeholder="{{ __('Password') }}" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
@@ -57,13 +57,13 @@
 
                                 <div class="row mb-12">
                                     <div class="col-md-12 offset-md-12">
-                                        <button type="submit" class="btn btn-primary">
-                                            {{ __('Login') }}
+                                        <button type="submit" class="btn btn-secondary" style="color:#fff;">
+                                           Iniciar
                                         </button>
 
                                         @if (Route::has('password.request'))
                                             <a class="btn btn-link" href="{{ route('password.request') }}">
-                                                {{ __('Forgot Your Password?') }}
+                                               Olvide mi contraseña
                                             </a>
                                         @endif
                                     </div>
