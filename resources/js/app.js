@@ -8,7 +8,6 @@ window.Vue = require('vue').default;
 import vuetify from './vuetify';
 
 
-
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -25,6 +24,7 @@ Vue.component('componentetareas', require('./components/componenteTareas.vue').d
 Vue.component('componenteproyectos', require('./components/componenteProyectos.vue').default);
 Vue.component('componenteiconos', require('./components/componenteIconos.vue').default);
 Vue.component('componenteperfil', require('./components/componentePerfil.vue').default);
+Vue.component('componentecontactos', require('./components/componenteContactos.vue').default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

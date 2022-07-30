@@ -17,6 +17,6 @@
 	@yield('content')
 
 </body>
-<script src="{{ env('APP_URL') }}/public/js/app.js"></script>
-<script src="{{ env('APP_SOCKET_IO') }}/socket.io/socket.io.js"></script>
+<script src="{{ env('APP_URL') }}/public/js/app.js" charset="utf-8"></script>
+<script src="{{ env('APP_SOCKET_IO') }}socket.io/socket.io.js"></script>
 </html>

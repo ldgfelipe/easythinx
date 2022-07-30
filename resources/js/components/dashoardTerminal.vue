@@ -3,21 +3,21 @@
         <v-row>
             <v-col cols="12" md="8">
 
-                <componenteproyectos @cargaproyecto="cargaProy($event)" :csrf="csrf" :url="url" :sesion="sesion" :usuarios="usuarios"></componenteproyectos>
+                <componenteproyectos @cargaproyecto="cargaProy($event)" :websocket="websocket" :csrf="csrf" :url="url" :sesion="sesion" :usuarios="usuarios"></componenteproyectos>
             </v-col>
                 <v-col cols="12" md="4">
 
-                    <componenteiconos :sesion="sesion"></componenteiconos>
+                    <componenteiconos :csrf="csrf" :url="url"  :websocket="websocket" :sesion="sesion" :idproy="proyectoSelect"></componenteiconos>
 
                 </v-col>
             <v-col cols="12" md="4" class="tabledata" v-if="Object.keys(proyectoSelect).length>0">
-             <componentetareas :csrf="csrf" :url="url"  :sesion="sesion" :idproy="proyectoSelect" ></componentetareas>
+             <componentetareas :csrf="csrf" :url="url"  :websocket="websocket" :sesion="sesion" :idproy="proyectoSelect" ></componentetareas>
             </v-col>
              <v-col cols="12" md="4" class="tabledata" v-if="Object.keys(proyectoSelect).length>0">
-                <componentearchivos :csrf="csrf" :url="url" :sesion="sesion" :idproy="proyectoSelect" ></componentearchivos>
+                <componentearchivos :csrf="csrf" :url="url"  :websocket="websocket" :sesion="sesion" :idproy="proyectoSelect" ></componentearchivos>
             </v-col>
              <v-col cols="12" md="4" class="tabledata" v-if="Object.keys(proyectoSelect).length>0">
-                <componentechat :csrf="csrf" :url="url" :sesion="sesion" :idproy="proyectoSelect" ></componentechat>
+                <componentechat :csrf="csrf" :url="url"  :websocket="websocket" :sesion="sesion" :idproy="proyectoSelect" ></componentechat>
             </v-col>
                  <v-col  cols="12" md="12" v-if="loader" >
                         <v-progress-linear
@@ -96,7 +96,8 @@
             url:{
                 default:""
             },
-            sesion:{}
+            sesion:{},
+            websocket:""
         }
 
 

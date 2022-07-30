@@ -50,14 +50,48 @@
                                 Configuración <v-spacer></v-spacer><v-btn @click="configview=false"><v-icon>mdi-close</v-icon></v-btn>
                             </v-card-title>
                             <v-card-text>
-                                 <componenteperfil></componenteperfil>
+                                 <componenteperfil
+                                    :csrf="csrf"
+                                    :url="url"
+                                    :websocket="websocket"
+                                    :sesion="sesion"
+                                    :idproy="idproy"
+                                 ></componenteperfil>
                             </v-card-text>
                         </v-card>
 
 
                     </v-dialog>
             </v-col>
-            <v-col cols="12" md="9" >
+            <v-col>
+                <v-btn class="greenD"
+                elevation="2"
+                icon
+                raised
+                @click="contacts=true"
+                >
+                    <v-icon class="white--text">mdi-book-open-variant</v-icon>
+            </v-btn>
+                                        <v-dialog fullscreen persistant v-model="contacts">
+                                            <v-card>
+                                                <v-card-title class="greenD white--text"  >
+                                                    Lista de contactos <v-spacer></v-spacer> <v-btn class="white greenD--text" @click="contacts=false">
+                                                        <v-icon>mdi-close</v-icon>
+                                                    </v-btn>
+                                                </v-card-title>
+                                                <v-card-text>
+                                                    <componentecontactos
+                                                        :csrf="csrf"
+                                                        :url="url"
+                                                        :websocket="websocket"
+                                                        :sesion="sesion"
+                                                        :idproy="idproy"
+                                                    ></componentecontactos>
+                                                </v-card-text>
+                                            </v-card>
+                                        </v-dialog>
+            </v-col>
+            <v-col cols="12" md="6" >
 
                <p style="font-size:10px;">{{sesion.email}}</p>
             </v-col>
@@ -70,11 +104,16 @@ export default{
     data(){
         return{
             perfilview:false,
-            configview:false
+            configview:false,
+            contacts:false
         }
     },
     props:{
-        sesion:{}
+        csrf:"",
+        url:"",
+        websocket:"",
+        sesion:{},
+        idproy:""
     }
 }
 </script>

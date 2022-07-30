@@ -16,4 +16,12 @@ class Usuarios extends Controller
 
       return response()->json($used);
    }
+
+   public function busquedausers(Request $request){
+
+        $users=User::where('email','LIKE','%'.$request->search.'%')->get();
+
+        return response()->json($users);
+
+   }
 }

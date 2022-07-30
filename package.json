@@ -28,7 +28,6 @@
     "dependencies": {
         "socket.io-client": "^4.5.1",
         "vue-pdf": "^4.3.0",
-        "vue-socket.io": "^3.0.10",
         "vuetify": "^2.6.6"
     }
 }

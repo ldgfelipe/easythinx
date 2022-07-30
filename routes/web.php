@@ -55,4 +55,8 @@ Route::post('downloadfile',[ArchivosController::class,'downloadfile']);
 Route::post('eliminaArchivo',[ArchivosController::class,'eliminaArchivo']);
 
 ////Chats
-Route::post('enviamensaje',[ChatsController::class,'enviamensaje']);
+Route::post('guardamensaje',[ChatsController::class,'guardamensaje']);
+Route::post('tomamensajes',[ChatsController::class,'tomamensajes']);
+
+////Contactos
+Route::post('buscausuarios',[Usuarios::class,'busquedausers']);
