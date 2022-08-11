@@ -7,7 +7,15 @@ require('./bootstrap');
 window.Vue = require('vue').default;
 import vuetify from './vuetify';
 
+//support vuex
+import Vuex from 'vuex'
+Vue.use(Vuex)
 
+import storedata from './Store/index';
+
+const store = new Vuex.Store(
+    storedata
+ )
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -33,6 +41,7 @@ Vue.component('componentecontactos', require('./components/componenteContactos.v
 if(document.getElementById('app')){
 const app = new Vue({
     el: '#app',
-    vuetify
+    vuetify,
+    store
 });
 }

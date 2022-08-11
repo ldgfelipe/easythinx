@@ -16,11 +16,15 @@ class CreateChatsTable extends Migration
         Schema::create('chats', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            ///// datos de emisor
             $table->string('mensaje');
-            $table->string('usuario');
+            $table->integer('id_usuario');
+            $table->string('name');
+            $table->string('email');
+            ///// datos de remitente
             $table->integer('id_proyecto');
-            $table->string('para');
-            $table->string('tipo');
+            $table->string('para'); /// id usuario o todos
+            $table->string('tipo'); /// urgente, normal
         });
     }
 

@@ -46,19 +46,28 @@
 </style>
 
 <script>
-
+import { mapState,mapActions,mapMutations } from 'vuex';
     export default {
         data(){
             return {
                 proyectoSelect:{},
-                usuarios:[],
                 loader:false
             }
         },
+       computed: {
+            ...mapState(['usuarios'])
+       },
+        created(){
+          this.cargaCSRF(this.csrf)
+             this.cargaURL(this.url)
+
+        },
         mounted(){
-                this.cargaUsuarios();
+                this.cargaUsuarios(this.sesion);
         },
         methods:{
+            ...mapMutations(['cargaCSRF','cargaURL']),
+            ...mapActions(['cargaUsuarios']),
             cargaProy(ev){
                 this.loader=true
                 this.proyectoSelect={}
@@ -69,24 +78,6 @@
 
 
             },
-            cargaUsuarios(){
-
-             var payload={
-                acces:"data"
-            }
-            fetch(this.url+"cargausuarios",{
-                method:'POST',
-                headers:{
-                    'Content-type':'application/json',
-                    'X-CSRF-TOKEN':this.csrf
-                },
-                body:JSON.stringify(payload)
-            })
-            .then(res=>res.json())
-            .then((res)=>{
-               this.usuarios=res
-            })
-        },
 
         },
         props:{

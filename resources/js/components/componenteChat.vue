@@ -8,7 +8,32 @@
 
         </v-toolbar-title> <v-spacer></v-spacer>
 
-       <v-icon class="white--text">mdi-account-supervisor</v-icon>
+
+  <v-menu
+      v-model="showMenu"
+      absolute
+      offset-y
+    >
+    <template v-slot:activator="{ on, attrs }">
+       <v-icon class="white--text"
+        v-bind="attrs"
+        v-on="on"
+       >mdi-account-supervisor</v-icon>
+  </template>
+
+
+     <v-list>
+        <v-list-item
+          v-for="(item, index) in usuarios"
+          :key="index"
+        >
+          <v-list-item-title @click="selectuser(item)">{{ item }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+
+
+
+</v-menu>
 
     </v-app-bar>
     <v-container class="fill-height ">
@@ -41,14 +66,15 @@
 </template>
 
 <script>
-
+import { mapState } from 'vuex'
     export default {
         data: function() {
             return {
                 chat: [
                     ],
                 msg: null,
-                socket:io(this.websocket)
+                socket:io(this.websocket),
+                showMenu: false,
 
             }
         },
@@ -57,12 +83,19 @@
                     console.log('respuesta de socket')
             })
         },
-
+    computed:{
+        ...mapState(['usuarios'])
+    },
      methods: {
     send(){
         var payload = {
-            message:this.msg,
-            username:this.sesion.email
+            proyecto:this.idproy,
+            session:this.sesion,
+            message:{
+                msj:this.msg,
+                to:"",
+                type:""
+            }
         }
  this.socket.emit('chat_mensaje',payload)
 
@@ -79,13 +112,17 @@
         from: "sushant",
         msg: "Hmm"
       })
+    },
+    selectuser(p){
+        console.log(p)
     }
   },
 props:{
     csrf:"",
     url:"",
     websocket:"",
-    sesion:{}
+    sesion:{},
+    idproy:{}
 
     }
     }

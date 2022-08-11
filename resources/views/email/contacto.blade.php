@@ -9,7 +9,7 @@
 
 
 
-<a href="{{$request['url']}}register">Registrate</a>
+<a href="{{$request['url']}}register?email={{$request['email']}}&name={{$request['name']}}">Registrate</a>
 
 </body>
     </html>

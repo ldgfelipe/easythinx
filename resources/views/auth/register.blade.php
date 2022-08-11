@@ -23,7 +23,7 @@
                             <label for="name" class="col-md-4 col-form-label text-md-end">Nombre</label><br />
 
                             <div class="col-md-6">
-                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
+                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="<?php if(isset($_REQUEST['name']) ){ echo $_REQUEST['name']; }?>" <?php if(isset($_REQUEST['name']) and $_REQUEST['name']!=NULL){ echo "readonly";} ?>  required autocomplete="name" autofocus>
 
                                 @error('name')
                                     <span class="invalid-feedback" role="alert">
@@ -37,7 +37,7 @@
                             <label for="email" class="col-md-4 col-form-label text-md-end">Correo</label><br />
 
                             <div class="col-md-6">
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
+                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="<?php if(isset($_REQUEST['name']) ){ echo $_REQUEST['email']; } ?>"  <?php if(isset($_REQUEST['email']) and $_REQUEST['email']!=NULL){ echo "readonly";} ?> required autocomplete="email">
 
                                 @error('email')
                                     <span class="invalid-feedback" role="alert">
