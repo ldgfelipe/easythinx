@@ -22,6 +22,7 @@ class CreateTareasTable extends Migration
             $table->longtext('obs');
             $table->integer('status');
             $table->longtext('asignado');
+            $table->time('fechaLimite');
 
         });
     }

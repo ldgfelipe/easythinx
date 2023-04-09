@@ -13,6 +13,18 @@
 }
 
 
-.carousel-control-transition{      
+.carousel-control-transition{
 	opacity .15s ease;
+}
+
+
+
+.barraminimizados{
+
+    position:fixed;
+    bottom:0px;
+    left:0px;
+    width: 100%;
+    background-color: #fff;
+
 }

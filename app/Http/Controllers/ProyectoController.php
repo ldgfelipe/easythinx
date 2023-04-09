@@ -25,7 +25,13 @@ class ProyectoController extends Controller
 
     }
         if($request->action=='editar'){
+
+
             $update=proyecto::where('id','=',$request->id);
+
+
+
+
             $upproyect=Array(
                 "id_create"=>$request->id_create,
                 "id_collaborate"=>$request->id_collaborate,
@@ -34,6 +40,7 @@ class ProyectoController extends Controller
                 "status" => $request->status ? $request->status : 0,
                 "notas" => $request->notas ? $request->notas : ''
             );
+
             $update->update($upproyect);
             $respuesta=Array('res'=>'Cambios realizados');
         }

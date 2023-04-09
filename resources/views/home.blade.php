@@ -4,7 +4,7 @@
 
     <div id="app">
         <v-app class="appdata">
-            <dashoardterminal :sesion="{{Auth::user()}}" :websocket="'{{ env('APP_SOCKET_IO') }}'" :csrf="'{{ csrf_token() }}'" :url="'{{env('APP_URL')}}'"></dashoardterminal>
+            <dashoardterminal  :sesion="{{Auth::user()}}" :websocket="'{{ env('APP_SOCKET_IO') }}'" :csrf="'{{ csrf_token() }}'" :url="'{{env('APP_URL')}}'"></dashoardterminal>
         </v-app>
     </div>
 @endsection

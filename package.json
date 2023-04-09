@@ -7,13 +7,15 @@
         "watch-poll": "mix watch -- --watch-options-poll=1000",
         "hot": "mix watch --hot",
         "prod": "npm run production",
-        "production": "mix --production"
+        "production": "mix --production",
+        "docs": "jsdoc -c jsdoc.json"
     },
     "devDependencies": {
         "@popperjs/core": "^2.10.2",
         "axios": "^0.21",
         "bootstrap": "^5.1.3",
         "deepmerge": "^4.2.2",
+        "jsdoc": "^3.6.11",
         "laravel-mix": "^6.0.6",
         "lodash": "^4.17.19",
         "postcss": "^8.1.14",
@@ -27,9 +29,19 @@
         "vue-template-compiler": "^2.7.8"
     },
     "dependencies": {
+        "jsdoc-vue": "^1.0.0",
+        "jsdoc-vuex-plugin": "^1.0.0",
+        "moment": "^2.29.4",
+        "pug": "^3.0.2",
         "socket.io-client": "^4.5.1",
+        "vue-drag-drop": "^1.1.4",
+        "vue-drag-n-drop": "^1.3.0",
+        "vue-page-designer": "^1.1.1",
         "vue-pdf": "^4.3.0",
+        "vue-socket.io": "^3.0.10",
+        "vue2-editor": "^2.10.3",
         "vuetify": "^2.6.6",
-        "vuex": "^3.1.2"
+        "vuex": "^3.1.2",
+        "vuse": "^0.1.1"
     }
 }

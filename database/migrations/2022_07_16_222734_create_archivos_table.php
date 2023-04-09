@@ -19,8 +19,11 @@ class CreateArchivosTable extends Migration
             $table->text('urlArchivo');
             $table->string('nombre');
             $table->integer('user');
+            $table->integer('permiso'); // 1 visible - no descarga, 2 visble - descarga, 3 no visible collaboradores
             $table->integer('id_proyecto');
             $table->string('extension');
+            $table->longtext('asignado');
+            $table->integer('folder');
         });
     }
 

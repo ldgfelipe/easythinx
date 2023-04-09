@@ -11,7 +11,7 @@ class ContactoMailable extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $subject = "informacion prueba ";
+    public $subject = "Invitación a EasyThinx";
     public $request ="";
 
     /**
@@ -32,6 +32,6 @@ class ContactoMailable extends Mailable
      */
     public function build()
     {
-        return $this->view('email.contacto');
+        return $this->view('email.notificacion');
     }
 }

@@ -17,10 +17,12 @@ class CreateChatsTable extends Migration
             $table->id();
             $table->timestamps();
             ///// datos de emisor
-            $table->string('mensaje');
+            $table->text('mensaje');
             $table->integer('id_usuario');
             $table->string('name');
             $table->string('email');
+            $table->date('fecha');
+            $table->time('hora');
             ///// datos de remitente
             $table->integer('id_proyecto');
             $table->string('para'); /// id usuario o todos

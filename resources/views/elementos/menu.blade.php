@@ -7,21 +7,13 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ml-auto">
+
+            @foreach ($menus as $menu)
             <li class="nav-item">
-                <a class="nav-link" href="#">Acerca de</a>
+                <a class="nav-link" href="{{env('APP_URL')}}{{$menu->url}}">{{$menu->menu}}</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">T & C</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Contacto</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Servicios</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Preguntas Más Frecuentes</a>
-            </li>
+            @endforeach
+
             @if (Auth::check())
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url('/') }}/home">Dashboard</a>

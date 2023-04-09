@@ -21,6 +21,7 @@ class CreatePerfilsTable extends Migration
             $table->string('notaria');
             $table->string('pais');
             $table->string('estado');
+            $table->integer('id_usuario');
         });
     }
 
