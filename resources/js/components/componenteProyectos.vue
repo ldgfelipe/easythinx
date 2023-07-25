@@ -3,7 +3,7 @@
         <v-card>
             <v-card-text>
                 <v-row>
-                    <v-col cols="10">
+                    <v-col cols="12">
                         <v-select
                             label="Seleccione un proyecto"
                             :items="valproy"
@@ -12,7 +12,7 @@
                             @change="cambiarDatos($event)"
                         ></v-select>
                     </v-col>
-                    <v-col cols="2">
+                    <v-col cols="12">
                         <v-btn v-if="sesion.tipo_usuario>=1" class="greenD" @click="adminproyect = true"
                             ><v-icon class="white--text"
                                 >mdi-form-select</v-icon
@@ -193,6 +193,10 @@ export default {
                 {
                     text: "Status",
                     value: "status",
+                },
+                {
+                    text: "Plantilla",
+                    value: "plantilla",
                 },
                 {
                     text: "Editar",
