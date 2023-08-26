@@ -98,7 +98,15 @@
                     <v-card-title class="greenD white--text">
                         {{ fole.nombre }}
                         <v-spacer></v-spacer>
-                        <v-btn v-if="Object.keys(archivos[fole.nombre]).length===0" class="red white--text" @click="eliminaCarpeta(fole.id)"><v-icon>mdi-delete</v-icon></v-btn>
+                        <v-btn
+                            v-if="typeof archivos[fole.nombre] !== 'undefined' &&
+                                typeof archivos[fole.nombre] !== null && Object.keys(archivos[fole.nombre]).length === 0
+                            "
+                            class="red white--text"
+                            @click="eliminaCarpeta(fole.id)"
+                            ><v-icon>mdi-delete</v-icon></v-btn
+                        >
+
                         <v-btn
                             class="white greenD--text"
                             @click="muestraCarpeta(fole.nombre)"
@@ -111,140 +119,241 @@
                     </v-card-title>
                     <v-card-text>
                         <v-data-table
-                            v-if="carpetas[fole.nombre] && archivos[fole.nombre]"
+                            v-if="
+                                carpetas[fole.nombre] && archivos[fole.nombre]
+                            "
                             :search="searchgral"
                             :headers="titlearch"
                             :items="archivos[fole.nombre]"
+                            v-model="archivos[fole.nombre]"
                         >
-                            <template v-slot:item.comentario="{ item }">
-                                <v-tooltip bottom>
-                                    <template v-slot:activator="{ on, attrs }">
-                                        <v-icon
-                                            color="greenD"
-                                            dark
-                                            v-bind="attrs"
-                                            v-on="on"
-                                            style="cursor: pointer"
+                            <!---------move drag an drop-------->
+
+                            <!-------mode drag and drop----->
+                            <template v-slot:body="props">
+
+
+                                <draggable
+                                    :list="props.items"
+                                    tag="tbody"
+                                    :disabled="!allowDrag"
+                                    :move="onMoveCallback"
+                                    :clone="onCloneCallback"
+                                    @end="onDropCallback"
+                                >
+
+
+                                    <data-table-row-handler
+                                        v-for="(item, index) in props.items"
+                                        :key="index"
+                                        :item="item"
+                                        :headers="titlearch"
+                                    >
+
+                                        <template
+                                            v-slot:item.comentario="{ item }"
                                         >
-                                            mdi-chat
-                                        </v-icon>
-                                    </template>
-                                    <span>
-                                        {{ item.comentario }}
-                                    </span>
-                                </v-tooltip>
-                            </template>
+                                            <v-tooltip bottom>
+                                                <template
+                                                    v-slot:activator="{
+                                                        on,
+                                                        attrs,
+                                                    }"
+                                                >
+                                                    <v-icon
+                                                        color="greenD"
+                                                        dark
+                                                        v-bind="attrs"
+                                                        v-on="on"
+                                                        style="cursor: pointer"
+                                                    >
+                                                        mdi-chat
+                                                    </v-icon>
+                                                </template>
+                                                <span>
+                                                    {{ item.comentario }}
+                                                </span>
+                                            </v-tooltip>
+                                        </template>
 
-                            <template v-slot:item.acciones="{ item }">
-                                <v-btn
-                                    v-if="validapermiso(item, 'ver')"
-                                    class="greenD"
-                                    elevation="2"
-                                    icon
-                                    raised
-                                    @click="openvisorfile(item)"
-                                    title="Ver Archivo"
-                                >
-                                    <v-icon class="white--text">mdi-eye</v-icon>
-                                </v-btn>
+                                        <template
+                                            v-slot:item.acciones="{ item }"
+                                        >
+                                            <v-btn
+                                                v-if="
+                                                    validapermiso(item, 'ver')
+                                                "
+                                                class="greenD"
+                                                elevation="2"
+                                                icon
+                                                raised
+                                                @click="openvisorfile(item)"
+                                                title="Ver Archivo"
+                                            >
+                                                <v-icon class="white--text"
+                                                    >mdi-eye</v-icon
+                                                >
+                                            </v-btn>
 
-                                <v-btn
-                                    v-if="proyectoSelect.adminproy === true"
-                                    class="red"
-                                    elevation="2"
-                                    icon
-                                    raised
-                                    @click="EliminarArchivo(item)"
-                                    title="Eliminar Archivo"
-                                >
-                                    <v-icon class="white--text"
-                                        >mdi-delete</v-icon
-                                    >
-                                </v-btn>
+                                            <v-btn
+                                                v-if="
+                                                    proyectoSelect.adminproy ===
+                                                    true
+                                                "
+                                                class="red"
+                                                elevation="2"
+                                                icon
+                                                raised
+                                                @click="EliminarArchivo(item)"
+                                                title="Eliminar Archivo"
+                                            >
+                                                <v-icon class="white--text"
+                                                    >mdi-delete</v-icon
+                                                >
+                                            </v-btn>
 
-                                <v-btn
-                                    v-if="proyectoSelect.adminproy === true"
-                                    class="greenD"
-                                    elevation="2"
-                                    icon
-                                    raised
-                                    title="Cambiar Permisos"
-                                    @click="Cambiarpermisos(item)"
-                                >
-                                    <v-icon class="white--text"
-                                        >mdi-lock</v-icon
-                                    >
-                                </v-btn>
+                                            <v-btn
+                                                v-if="
+                                                    proyectoSelect.adminproy ===
+                                                    true
+                                                "
+                                                class="greenD"
+                                                elevation="2"
+                                                icon
+                                                raised
+                                                title="Cambiar Permisos"
+                                                @click="Cambiarpermisos(item)"
+                                            >
+                                                <v-icon class="white--text"
+                                                    >mdi-lock</v-icon
+                                                >
+                                            </v-btn>
+                                        </template>
+                                    </data-table-row-handler>
+                                </draggable>
                             </template>
                         </v-data-table>
                     </v-card-text>
                 </v-card>
                 <!------carga carpetas ------>
+
+
+
+
+
+
+
+
                 <!------carga sin carpetas ------>
                 <v-data-table
-                v-if="Object.keys(archivos.sinfolder).length>0"
+                    v-if="typeof archivos.sinfolder !== 'undefined' &&
+                                typeof archivos.sinfolder !== null && Object.keys(archivos.sinfolder).length > 0"
                     :search="searchgral"
                     :headers="titlearch"
                     :items="archivos.sinfolder"
+                    item-key="name"
+                    class="elevation-1"
                 >
-                    <template v-slot:item.comentario="{ item }">
-                        <v-tooltip bottom>
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-icon
-                                    color="greenD"
-                                    dark
-                                    v-bind="attrs"
-                                    v-on="on"
-                                    style="cursor: pointer"
-                                >
-                                    mdi-chat
-                                </v-icon>
-                            </template>
-                            <span>
-                                {{ item.comentario }}
-                            </span>
-                        </v-tooltip>
+                    <!-------mode drag and drop----->
+                    <template v-slot:body="props">
+                        <draggable
+                            :list="props.items"
+                            tag="tbody"
+                            :disabled="!allowDrag"
+                            :move="onMoveCallback"
+                            :clone="onCloneCallback"
+                            @end="onDropCallback"
+
+                        >
+                            <data-table-row-handler
+                                v-for="(item, index) in props.items"
+                                :key="index"
+                                :item="item"
+                                :headers="titlearch"
+                            >
+                                <template v-slot:item.comentario="{ item }">
+                                    <v-tooltip bottom>
+                                        <template
+                                            v-slot:activator="{ on, attrs }"
+                                        >
+                                            <v-icon
+                                                color="greenD"
+                                                dark
+                                                v-bind="attrs"
+                                                v-on="on"
+                                                style="cursor: pointer"
+                                            >
+                                                mdi-chat
+                                            </v-icon>
+                                        </template>
+                                        <span>
+                                            {{ item.comentario }}
+                                        </span>
+                                    </v-tooltip>
+                                </template>
+
+                                <template v-slot:item.acciones="{ item }">
+                                    <v-btn
+                                        v-if="validapermiso(item, 'ver')"
+                                        class="greenD"
+                                        elevation="2"
+                                        icon
+                                        raised
+                                        @click="openvisorfile(item)"
+                                        title="Ver Archivo"
+                                    >
+                                        <v-icon class="white--text"
+                                            >mdi-eye</v-icon
+                                        >
+                                    </v-btn>
+
+                                    <v-btn
+                                        v-if="proyectoSelect.adminproy === true"
+                                        class="red"
+                                        elevation="2"
+                                        icon
+                                        raised
+                                        @click="EliminarArchivo(item)"
+                                        title="Eliminar Archivo"
+                                    >
+                                        <v-icon class="white--text"
+                                            >mdi-delete</v-icon
+                                        >
+                                    </v-btn>
+
+                                    <v-btn
+                                        v-if="proyectoSelect.adminproy === true"
+                                        class="greenD"
+                                        elevation="2"
+                                        icon
+                                        raised
+                                        title="Cambiar Permisos"
+                                        @click="Cambiarpermisos(item)"
+                                    >
+                                        <v-icon class="white--text"
+                                            >mdi-lock</v-icon
+                                        >
+                                    </v-btn>
+                                </template>
+                            </data-table-row-handler>
+                        </draggable>
                     </template>
-
-                    <template v-slot:item.acciones="{ item }">
-                        <v-btn
-                            v-if="validapermiso(item, 'ver')"
-                            class="greenD"
-                            elevation="2"
-                            icon
-                            raised
-                            @click="openvisorfile(item)"
-                            title="Ver Archivo"
-                        >
-                            <v-icon class="white--text">mdi-eye</v-icon>
-                        </v-btn>
-
-                        <v-btn
-                            v-if="proyectoSelect.adminproy === true"
-                            class="red"
-                            elevation="2"
-                            icon
-                            raised
-                            @click="EliminarArchivo(item)"
-                            title="Eliminar Archivo"
-                        >
-                            <v-icon class="white--text">mdi-delete</v-icon>
-                        </v-btn>
-
-                        <v-btn
-                            v-if="proyectoSelect.adminproy === true"
-                            class="greenD"
-                            elevation="2"
-                            icon
-                            raised
-                            title="Cambiar Permisos"
-                            @click="Cambiarpermisos(item)"
-                        >
-                            <v-icon class="white--text">mdi-lock</v-icon>
-                        </v-btn>
-                    </template>
+                    <!----mode drag and drop-->
                 </v-data-table>
+
                 <!------carga sin carpetas ------>
+
+
+
+
+
+
+
+
+
+
+
+
             </v-card-text>
             <v-card-text v-if="!visorFile">
                 <v-btn class="greenD white--text" @click="visorFile = true">
@@ -319,16 +428,13 @@
                     >
                     </v-select>--->
                     <v-select
-                                            v-model="addfile.folder"
-                                            v-if="
-                                                proyectoSelect.adminproy ===
-                                                true
-                                            "
-                                            label="Carpeta"
-                                            outlined
-                                            :items="listcarpetas"
-                                        >
-                                        </v-select>
+                        v-model="addfile.folder"
+                        v-if="proyectoSelect.adminproy === true"
+                        label="Carpeta"
+                        outlined
+                        :items="listcarpetas"
+                    >
+                    </v-select>
 
                     <v-textarea
                         v-model="addfile.comentario"
@@ -447,97 +553,90 @@
                             </div>
                             <div v-if="tpfile === 'simple'"></div>
                         </v-col>
-                       
                     </v-row>
-                    <v-card style="position:fixed; top:0px; right:0px;">
-                                <v-card-title class="greenD white--text">
-                                    <v-spacer v-if="datavisible"></v-spacer>
+                    <v-card style="position: fixed; top: 0px; right: 0px">
+                        <v-card-title class="greenD white--text">
+                            <v-spacer v-if="datavisible"></v-spacer>
 
-                                    <v-btn
-                                        class="greenD white--text"
-                                        @click="viewdetalles()"
-                                        ><v-icon class="white--greenD">{{
-                                            datavisible
-                                                ? "mdi-arrow-collapse-right"
-                                                : "mdi-arrow-collapse-left"
-                                        }}</v-icon></v-btn
+                            <v-btn
+                                class="greenD white--text"
+                                @click="viewdetalles()"
+                                ><v-icon class="white--greenD">{{
+                                    datavisible
+                                        ? "mdi-arrow-collapse-right"
+                                        : "mdi-arrow-collapse-left"
+                                }}</v-icon></v-btn
+                            >
+
+                            <v-btn
+                                class="white"
+                                elevation="2"
+                                icon
+                                raised
+                                @click="viewdialog = false"
+                            >
+                                <v-icon class="white--greenD">mdi-close</v-icon>
+                            </v-btn>
+                        </v-card-title>
+                        <v-card-text v-if="datavisible">
+                            <br /><br />
+                            <v-text-field
+                                outlined
+                                v-model="fileselect.nombre"
+                                v-if="proyectoSelect.adminproy === true"
+                            ></v-text-field>
+
+                            <hr />
+
+                            URL:{{ fileselect.urlArchivo }}
+                            <hr />
+                            Extensión:{{ fileselect.urlArchivo }}
+                            <hr />
+
+                            <v-textarea
+                                v-model="fileselect.comentario"
+                                outlined
+                                :disabled="!proyectoSelect.adminproy"
+                            ></v-textarea>
+
+                            <div v-if="validapermiso(item, 'descarga')">
+                                Descargar:
+                                <v-btn
+                                    class="primary"
+                                    elevation="2"
+                                    icon
+                                    raised
+                                    @click="descargarArchivo(fileselect)"
+                                >
+                                    <v-icon class="white--text"
+                                        >mdi-download</v-icon
                                     >
+                                </v-btn>
+                            </div>
+                            <hr />
+                            <div
+                                v-if="
+                                    proyectoSelect.adminproy === true
+                                        ? true
+                                        : sesion.id === fileselect.user
+                                "
+                            >
+                                Eliminar Archivo:
 
-                                    <v-btn
-                                        class="white"
-                                        elevation="2"
-                                        icon
-                                        raised
-                                        @click="viewdialog = false"
+                                <v-btn
+                                    class="error"
+                                    elevation="2"
+                                    icon
+                                    raised
+                                    @click="EliminarArchivo(fileselect)"
+                                >
+                                    <v-icon class="white--text"
+                                        >mdi-delete</v-icon
                                     >
-                                        <v-icon class="white--greenD"
-                                            >mdi-close</v-icon
-                                        >
-                                    </v-btn>
-                                </v-card-title>
-                                <v-card-text v-if="datavisible">
-                                    <br /><br />
-                                    <v-text-field
-                                        outlined
-                                        v-model="fileselect.nombre"
-                                        v-if="proyectoSelect.adminproy === true"
-                                    ></v-text-field>
-
-                                    <hr />
-
-                                    URL:{{ fileselect.urlArchivo }}
-                                    <hr />
-                                    Extensión:{{ fileselect.urlArchivo }}
-                                    <hr />
-
-                                    <v-textarea
-                                        v-model="fileselect.comentario"
-                                        outlined
-                                        :disabled="!proyectoSelect.adminproy"
-                                    ></v-textarea>
-
-                                    <div v-if="validapermiso(item, 'descarga')">
-                                        Descargar:
-                                        <v-btn
-                                            class="primary"
-                                            elevation="2"
-                                            icon
-                                            raised
-                                            @click="
-                                                descargarArchivo(fileselect)
-                                            "
-                                        >
-                                            <v-icon class="white--text"
-                                                >mdi-download</v-icon
-                                            >
-                                        </v-btn>
-                                    </div>
-                                    <hr />
-                                    <div
-                                        v-if="
-                                            proyectoSelect.adminproy === true
-                                                ? true
-                                                : sesion.id === fileselect.user
-                                        "
-                                    >
-                                        Eliminar Archivo:
-
-                                        <v-btn
-                                            class="error"
-                                            elevation="2"
-                                            icon
-                                            raised
-                                            @click="EliminarArchivo(fileselect)"
-                                        >
-                                            <v-icon class="white--text"
-                                                >mdi-delete</v-icon
-                                            >
-                                        </v-btn>
-                                    </div>
-                                    <div
-                                        v-if="proyectoSelect.adminproy === true"
-                                    >
-                                        <!----<v-select
+                                </v-btn>
+                            </div>
+                            <div v-if="proyectoSelect.adminproy === true">
+                                <!----<v-select
                                             label="Permisos de archivo"
                                             v-model="fileselect.permiso"
                                             v-if="
@@ -564,31 +663,24 @@
                                         >
                                         </v-select>--->
 
-                                        <v-select
-                                            v-model="fileselect.folder"
-                                            v-if="
-                                                proyectoSelect.adminproy ===
-                                                true
-                                            "
-                                            label="Carpeta"
-                                            outlined
-                                            :items="listcarpetas"
-                                        >
-                                        </v-select>
+                                <v-select
+                                    v-model="fileselect.folder"
+                                    v-if="proyectoSelect.adminproy === true"
+                                    label="Carpeta"
+                                    outlined
+                                    :items="listcarpetas"
+                                >
+                                </v-select>
 
-                                        <v-btn
-                                            class="greenD white--text"
-                                            @click="
-                                                GuardarCambiosArchivo(
-                                                    fileselect
-                                                )
-                                            "
-                                        >
-                                            Guardar Cambios de Archivo</v-btn
-                                        >
-                                    </div>
-                                </v-card-text>
-                            </v-card>
+                                <v-btn
+                                    class="greenD white--text"
+                                    @click="GuardarCambiosArchivo(fileselect)"
+                                >
+                                    Guardar Cambios de Archivo</v-btn
+                                >
+                            </div>
+                        </v-card-text>
+                    </v-card>
                 </v-card-text>
             </v-card>
             <v-dialog v-model="fullImage" persistent fullscreen>
@@ -632,13 +724,15 @@
     </div>
 </template>
 <script>
+// Default SortableJS
+import draggable from "vuedraggable";
 //import pdf from 'vue-pdf'
 import { mapState, mapActions, mapMutations } from "vuex";
 export default {
     data() {
         return {
             carpetas: [],
-            listcarpetas:[],
+            listcarpetas: [],
             folder: "",
             folders: [],
             addfolder: false,
@@ -703,6 +797,7 @@ export default {
             fullImage: false,
             listauserpermiso: [],
             archivoselect: {},
+            allowDrag:true
         };
     },
     computed: {
@@ -765,24 +860,46 @@ export default {
         this.cargaArchivos();
         this.cargacarpetas();
     },
+    components: {
+        draggable,
+    },
     methods: {
         ...mapActions(["loadArchivos", "cambiaStatuSnackBar"]),
-
+        onMoveCallback(event){
+            console.log(event)
+        },
+        onCloneCallback(event){
+            console.log(event)
+        },
+        onDropCallback(event){
+            console.log(event)
+        },
         validapermiso(val, tp) {
-            var resp = false;
+            var resp = true;
             if (this.proyectoSelect.adminproy === false) {
+                console.log('Inicia')
+                console.log('level 0')
                 //// SI NO ES ADMINISTRADOR VALIDA LOS PERMISOS POR USUARIO           ///  ? item.permiso >= 1
-                if (val.permisos !== "") {
+                if (val.permisos !== "" && val.permisos !== "[object Object]") {
+                    console.log('val 1')
                     var permis = JSON.parse(val.permisos);
-                    resp = permis.filter((permiso) =>
-                        permiso.usuario === this.sesion.email
-                            ? permiso[tp]
-                            : false
-                    );
+                   permis.filter((permiso) =>{
+                    console.log('val lvl 1')
+                     if(permiso.usuario === this.sesion.email){
+                        console.log('val lvl int 1')
+                        resp= permiso[tp]
+                     }else{
+                        console.log('val lvl int 2')
+                        resp= false
+                     }
+                });
                 }
             } else {
+                console.log('level 1')
                 resp = true;
             }
+            console.log('Temina')
+            console.log("Nivel:"+this.proyectoSelect.adminproy+" tipo:"+tp+" respuest:"+resp)
             return resp;
         },
         GuardaCambiosPermisos(p) {
@@ -790,6 +907,9 @@ export default {
             this.listapermisos = false;
         },
         Cambiarpermisos(item) {
+
+            console.log(item)
+
             this.archivoselect = {};
             this.listapermisos === false
                 ? (this.listapermisos = true)
@@ -797,9 +917,11 @@ export default {
             //// carga los permisos segun
             this.listauserpermiso = [];
 
-            console.log(item.permisos);
-            if (item.permisos !== "") {
+
+            if (item.permisos !== "" && item.permisos !== "[object Object]") {
+                console.log(item.permisos)
                 this.listauserpermiso = JSON.parse(item.permisos);
+                console.log(this.listauserpermiso )
             } else {
                 this.listauser.gral.map((e) => {
                     this.listauserpermiso.push({
@@ -816,8 +938,6 @@ export default {
             this.datavisible
                 ? (this.datavisible = false)
                 : (this.datavisible = true);
-
-          
         },
         minimizar() {
             this.$emit("minimizar", false);
@@ -880,21 +1000,20 @@ export default {
 
                     formData.append(
                         "folder",
-                        this.addfile.folder ? this.addfile.folder : ''
+                        this.addfile.folder ? this.addfile.folder : ""
                     );
 
-                    /*var listauserpermiso = {};
+                    var listauserpermiso =[];
+
+
                     this.listauser.gral.map((e) => {
                         listauserpermiso.push({
                             usuario: e,
                             ver: true,
                             descargar: true,
                         });
-                    });*/
-                    formData.append(
-                        "permisos", {}
-                    );
-
+                    });
+                    formData.append("permisos", {});
 
                     axios
                         .post(this.url + "subirarchivo", formData, config)
@@ -1039,6 +1158,7 @@ export default {
         cargacarpetas() {
             var payload = {
                 id_proyecto: this.proyectoSelect.id,
+                tipo:'Archivos'
             };
 
             fetch(this.url + "cargafolder", {
@@ -1055,16 +1175,17 @@ export default {
                     this.folders = res.datos;
                     this.carpetas = res.status;
 
-                    res.datos.map((pp)=>{
-                        this.listcarpetas.push(pp.nombre)
-                    })
-                    this.listcarpetas.push('')
+                    res.datos.map((pp) => {
+                        this.listcarpetas.push(pp.nombre);
+                    });
+                    this.listcarpetas.push("");
                 });
         },
         crearfolder() {
             var payload = {
                 nombre: this.folder,
                 id_proy: this.proyectoSelect.id,
+                tipo:'Archivos'
             };
 
             fetch(this.url + "addfolder", {
@@ -1089,9 +1210,9 @@ export default {
                 : (this.carpetas[n] = true);
         },
         eliminaCarpeta(id) {
-var payload={
-    id_folder:id
-}
+            var payload = {
+                id_folder: id,
+            };
             fetch(this.url + "deletefolder", {
                 method: "POST",
 
@@ -1101,13 +1222,12 @@ var payload={
                 },
                 body: JSON.stringify(payload),
             })
-            .then(res=>res.json())
-            .then((tres)=>{
-                console.log(tres)
-                this.cargaArchivos();
-                this.cargacarpetas();
-            })
-
+                .then((res) => res.json())
+                .then((tres) => {
+                    console.log(tres);
+                    this.cargaArchivos();
+                    this.cargacarpetas();
+                });
         },
         cambiarnombreCarpeta() {},
     },

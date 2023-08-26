@@ -2,7 +2,7 @@
 	<v-card>
 		<v-card-title class="greenD white--text">
 
-				Datos de Configuración <v-spacer></v-spacer>  
+				Datos de Configuración <v-spacer></v-spacer>
 
 					<v-menu offset-y >
 					      <template v-slot:activator="{ attrs, on }">
@@ -29,7 +29,7 @@
 		</v-card-title>
 		<v-card-text>
 
-			<component 
+			<component
 				v-bind:is="componente"
 				:csrf="csrf"
                 :url="url"
@@ -37,7 +37,7 @@
                 :sesion="sesion"
                 :idproy="idproy"
 			></component>
-		
+
 		</v-card-text>
 
 	</v-card>
@@ -49,6 +49,7 @@
 				componente:"usuarios",
 				itemsMenu:[
 					 { title: 'Usuarios', componente:'usuarios' },
+                     { title: 'Plantillas', componente:'adminplantillas' },
 				]
 			}
 		},

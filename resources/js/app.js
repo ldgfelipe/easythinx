@@ -48,6 +48,7 @@ Vue.component('componenteperfil', require('./components/administrador/componente
 Vue.component('componentecontactos', require('./components/componenteContactos.vue').default);
 
 
+
 //// alertas snackbar
 
 Vue.component('snackbar', require('./components/snackbar.vue').default);
@@ -59,6 +60,7 @@ Vue.component('componentecms', require('./components/administrador/componenteCMS
 
 //// componentes config
 Vue.component('usuarios', require('./components/administrador/config/usuarios.vue').default);
+Vue.component('adminplantillas', require('./components/administrador/config/adminplantillas.vue').default);
 
 //// componentes CMS
 Vue.component('editorhtml', require('./components/administrador/cms/componenteEditorHTMLBuilder.vue').default);
@@ -77,7 +79,9 @@ Vue.component('grid2',require('./components/administrador/cms/grid/grid2.vue').d
 Vue.component('grid3',require('./components/administrador/cms/grid/grid3.vue').default);
 Vue.component('grid4',require('./components/administrador/cms/grid/grid4.vue').default);
 
+/// elementos
 
+Vue.component('data-table-row-handler', require('./components/elementos/dataTableRow.vue').default);
 
 
 /**

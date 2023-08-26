@@ -18,6 +18,7 @@ class CreateFoldersTable extends Migration
             $table->timestamps();
             $table->string('nombre');
             $table->integer('id_proyecto');
+            $table->string('tipo');
         });
     }
 

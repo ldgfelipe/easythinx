@@ -2,7 +2,7 @@
     <v-card>
         <v-card-title>
             <v-row>
-                <v-col cols="4" md="4">
+                <v-col cols="4" md="2">
                     <v-btn class="greenD" elevation="2" icon raised @click="perfilview = true">
                         <v-icon class="white--text">mdi-account</v-icon>
                         <v-dialog v-model="perfilview" max-width="800" persistent>
@@ -23,7 +23,7 @@
                         </v-dialog>
                     </v-btn>
                 </v-col>
-                <v-col cols="4" md="4">
+                <v-col cols="4" md="2">
                     <v-btn class="greenD" elevation="2" icon raised @click="viewnotify=true">
                         <v-icon class="white--text">mdi-bell</v-icon>
                         <v-badge v-if="listanot.length>0" :content="listanot.length"></v-badge>
@@ -71,7 +71,7 @@
 
                     </v-dialog>
                 </v-col>
-                <v-col cols="4" md="4" v-if="sesion.tipo_usuario===2">
+                <v-col cols="4" md="2" v-if="sesion.tipo_usuario===2">
                     <v-btn class="greenD" elevation="2" icon raised @click="configview = true">
                         <v-icon class="white--text">mdi-cog-outline</v-icon>
                     </v-btn>
@@ -91,7 +91,7 @@
                         </v-card>
                     </v-dialog>
                 </v-col>
-                <v-col cols="4" md="4" v-if="sesion.tipo_usuario===2">
+                <v-col cols="4" md="2" v-if="sesion.tipo_usuario===2">
                     <v-btn title="Gestor CMS" class="greenD" elevation="2" icon raised @click="redirectotocms()">
                         <v-icon class="white--text">mdi-page-layout-header-footer</v-icon>
                     </v-btn>

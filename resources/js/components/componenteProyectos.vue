@@ -3,7 +3,7 @@
         <v-card>
             <v-card-text>
                 <v-row>
-                    <v-col cols="12">
+                    <v-col cols="10">
                         <v-select
                             label="Seleccione un proyecto"
                             :items="valproy"
@@ -12,8 +12,11 @@
                             @change="cambiarDatos($event)"
                         ></v-select>
                     </v-col>
-                    <v-col cols="12">
-                        <v-btn v-if="sesion.tipo_usuario>=1" class="greenD" @click="adminproyect = true"
+                    <v-col cols="2">
+                        <v-btn
+                            v-if="sesion.tipo_usuario >= 1"
+                            class="greenD"
+                            @click="adminproyect = true"
                             ><v-icon class="white--text"
                                 >mdi-form-select</v-icon
                             ></v-btn
@@ -50,7 +53,6 @@
                             >
                         </template>
                         <template v-slot:item.status="{ item }">
-
                             <v-chip
                                 v-if="item.status === 1"
                                 class="greenD white--text"
@@ -74,9 +76,11 @@
                         <v-card>
                             <v-card-title class="greenD white--text">
                                 Registra Proyecto <v-spacer></v-spacer>
-                                    <v-btn class="white greenD--text">
-                                        <v-icon @click="addp=false">mdi-close</v-icon>
-                                    </v-btn>
+                                <v-btn class="white greenD--text">
+                                    <v-icon @click="addp = false"
+                                        >mdi-close</v-icon
+                                    >
+                                </v-btn>
                             </v-card-title>
                             <v-card-text>
                                 <br />
@@ -114,9 +118,13 @@
                                     :items="usuarios"
                                 ></v-select>
 
-
                                 <hr />
-                                <v-select  v-model="addproyect.status" :items="statusProyectos" item-text="text" item-value="value"></v-select>
+                                <v-select
+                                    v-model="addproyect.status"
+                                    :items="statusProyectos"
+                                    item-text="text"
+                                    item-value="value"
+                                ></v-select>
                                 <!------<v-switch
                                     :disabled="perminput"
                                     v-model="addproyect.status"
@@ -137,17 +145,63 @@
                                     ><v-icon>mdi-delete</v-icon></v-btn
                                 >
                                 <v-progress-circular
-                                v-if="!stsave"
-                                :width="4"
-                                color="green"
-                                indeterminate
+                                    v-if="!stsave"
+                                    :width="4"
+                                    color="green"
+                                    indeterminate
                                 ></v-progress-circular>
                                 <v-btn
-                                    v-if="valsesion===true && stsave===true"
+                                    v-if="valsesion === true && stsave === true"
                                     @click="GuardarProyecto()"
                                     class="greenD white--text"
                                     >Guardar</v-btn
                                 >
+
+                                <v-btn
+                                    class="primary white--text"
+                                    @click="plantillaData = true"
+                                    >Plantila</v-btn
+                                >
+
+                                <v-dialog
+                                    v-model="plantillaData"
+                                    fullscreen
+                                    persistent
+                                >
+                                    <v-card>
+                                        <v-card-title
+                                            class="greenD white--text"
+                                        >
+                                            Plantilla de Trabajo
+                                            <v-spacer></v-spacer>
+                                            <v-btn
+                                                class="white greenD--text"
+                                                @click="plantillaData = false"
+                                                ><v-icon
+                                                    >mdi-close</v-icon
+                                                ></v-btn
+                                            >
+                                        </v-card-title>
+                                        <v-card-text>
+                                            <v-row>
+                                                <v-col
+                                                    cols="12"
+                                                    md="2"
+                                                    v-for="(
+                                                        key, index
+                                                    ) in listaPlantillas"
+                                                    :key="'plantilla' + index"
+                                                >
+                                                    <v-card>
+                                                        <v-card-text>
+                                                            {{ key.nombre }}
+                                                        </v-card-text>
+                                                    </v-card>
+                                                </v-col>
+                                            </v-row>
+                                        </v-card-text>
+                                    </v-card>
+                                </v-dialog>
                             </v-card-text>
                         </v-card>
                     </v-dialog>
@@ -162,7 +216,7 @@
  * @module components/componenteProyectos
  *
  */
-import  {mapState, mapActions, mapMutations} from 'vuex'
+import { mapState, mapActions, mapMutations } from "vuex";
 export default {
     /**
      * Data de sistema
@@ -179,8 +233,9 @@ export default {
         return {
             addp: false,
             adminproyect: false,
+            plantillaData: false,
             addproyect: {},
-            stsave:true,
+            stsave: true,
             tituloproyectos: [
                 {
                     text: "Proyecto",
@@ -195,29 +250,25 @@ export default {
                     value: "status",
                 },
                 {
-                    text: "Plantilla",
-                    value: "plantilla",
-                },
-                {
                     text: "Editar",
                     value: "edit",
                 },
-
             ],
-            statusProyectos:[
+            statusProyectos: [
                 {
-                    text:'Activo',
-                    value:1
+                    text: "Activo",
+                    value: 1,
                 },
                 {
-                    text:'Inactivo',
-                    value:0
+                    text: "Inactivo",
+                    value: 0,
                 },
                 {
-                    text:'Concluido',
-                    value:2
-                }
-            ]
+                    text: "Concluido",
+                    value: 2,
+                },
+            ],
+            listaPlantillas: [],
         };
     },
     /**
@@ -226,6 +277,7 @@ export default {
      */
     mounted() {
         this.loadProyectos();
+        this.cargaTareasPlantilla();
     },
 
     /**
@@ -237,7 +289,14 @@ export default {
      *
      */
     computed: {
-        ...mapState(['proyectos','usuarios','csrf', 'sesion', 'url','socket']),
+        ...mapState([
+            "proyectos",
+            "usuarios",
+            "csrf",
+            "sesion",
+            "url",
+            "socket",
+        ]),
 
         valproy() {
             var dataproy = [];
@@ -295,15 +354,32 @@ export default {
      *@property cambiaDatos() - verifica el id de proyecto sobre el cual realiza los cambios y emite el cambio al padre $emit
      */
     methods: {
-        ...mapMutations(['cargaProyectoSelect','cambiaLoader']),
-        ...mapActions(['cargaProyectos','LoadProyecto']),
+        ...mapMutations(["cargaProyectoSelect", "cambiaLoader"]),
+        ...mapActions(["cargaProyectos", "LoadProyecto"]),
+        cargaTareasPlantilla() {
+            let payload = {
+                lista: "Carga",
+            };
+            fetch(this.url + "cargaplantillas", {
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json",
+                    "X-CSRF-TOKEN": this.csrf,
+                },
+                body: JSON.stringify(payload),
+            })
+                .then((res) => res.json())
+                .then((res) => {
+                    console.log(res);
+                    this.listaPlantillas = res;
+                });
+        },
         cambiarDatos(event) {
-
-            console.log('cambia dato '+event)
+            console.log("cambia dato " + event);
 
             this.proyectos.map((p) => {
                 if (p.id === event) {
-                    this.LoadProyecto(p)
+                    this.LoadProyecto(p);
                 }
             });
         },
@@ -329,7 +405,6 @@ export default {
                         this.addp = false;
                         this.loadProyectos();
                         this.cambiaLoader(true);
-
                     });
             }
         },
@@ -356,28 +431,25 @@ export default {
                 acces: "data",
             };
 
-            var data={
-                url:this.url,
-                payload:payload,
-                csrf:this.csrf
-            }
-     this.cargaProyectos(data)
-     .then((res)=>{
-        console.log(res)
-        if(id){
-            setTimeout(()=>{
-                this.cambiarDatos(id)
-                },1500)
-
+            var data = {
+                url: this.url,
+                payload: payload,
+                csrf: this.csrf,
+            };
+            this.cargaProyectos(data).then((res) => {
+                console.log(res);
+                if (id) {
+                    setTimeout(() => {
+                        this.cambiarDatos(id);
+                    }, 1500);
                 }
-     })
+            });
             //// carga de proyecto con mapAction
             this.addproyect = {};
-
         },
         GuardarProyecto() {
-            this.stsave=false
-            var parProyect =this.addproyect
+            this.stsave = false;
+            var parProyect = this.addproyect;
             fetch(this.url + "registraproyecto", {
                 method: "POST", // or 'PUT'
                 body: JSON.stringify(this.addproyect), // data can be `string` or {object}!
@@ -390,16 +462,14 @@ export default {
                 .catch((error) => console.error("Error:", error))
                 .then((response) => {
                     this.addp = false;
-                    if(this.addproyect.status===2){
-                        this.cargaProyectoSelect({})
-                    }else{
-                    this.loadProyectos(parProyect.id);
+                    if (this.addproyect.status === 2) {
+                        this.cargaProyectoSelect({});
+                    } else {
+                        this.loadProyectos(parProyect.id);
                     }
-                        this.stsave=true
-
+                    this.stsave = true;
                 });
         },
     },
-
 };
 </script>

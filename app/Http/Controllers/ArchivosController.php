@@ -40,11 +40,15 @@ class ArchivosController extends Controller
         return response()->json(['success'=>'Archivo subido correctamente']);
     }
     public function cargarachivos(Request $request){
-        $folder=Folder::where('id_proyecto','=',$request->id_proyecto)->get();
+        $folder=Folder::where('id_proyecto','=',$request->id_proyecto)->where('tipo','=','Archivos')->get();
+
         foreach($folder as $fol){
             $listaArchivos[$fol->nombre]=Archivos::where('id_proyecto','=',$request->id_proyecto)->where('folder','=',$fol->nombre)->get();
         }
+
         $listaArchivos['sinfolder']=Archivos::where('id_proyecto','=',$request->id_proyecto)->where('folder','=','')->get();
+
+
         return response()->json($listaArchivos);
     }
     public function eliminaArchivo(Request $request){

@@ -7,10 +7,34 @@ use App\Models\Tareas;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Notificaciones;
 use App\Mail\Notificacion;
+use App\Models\Folder;
 use Mail;
 
 class TareasController extends Controller
 {
+
+    public function altaMutipleTareas (Request $request){
+
+        foreach($request->tareas as $tituloTarea){
+
+            $tarea=new Tareas();
+            $tarea->id_proyecto=intval($request->id_proyecto);
+            $tarea->titulo=$tituloTarea;
+            $tarea->obs=json_encode(Array(Array("fecha"=>date('d-m-Y'),"hora"=>date('H:i:s'),"correo"=>Auth::user()->email,"contenido"=> "Se crea tarea de plantilla")));
+            $tarea->desc= '';
+            $tarea->status=0;
+            $tarea->asignado= json_encode(Array(''));
+            $tarea->caducidad= NULL;
+            $tarea->folder= '';
+            $tarea->save();
+
+        }
+        $respuesta=Array('res'=>'Registro correcto');
+        return response()->json($respuesta);
+
+
+    }
+
 
     public function registrotareas(Request $request){
 
@@ -69,6 +93,7 @@ class TareasController extends Controller
             $tarea->status=$request->status ? $request->status : 0;
             $tarea->asignado=$request->asignado ? json_encode($request->asignado) : json_encode(Array(''));
             $tarea->caducidad=$request->caducidad ? $request->caducidad: NULL;
+            $tarea->folder=$request->folder ? $request->folder : '';
             $tarea->save();
             $respuesta=Array('res'=>'Registro correcto');
 
@@ -89,7 +114,8 @@ class TareasController extends Controller
                 "obs"=>$request->obs ? $request->obs : '',
                 "status"=>$request->status ? $request->status : 0,
                 "asignado"=>$request->asignado ? $request->asignado : json_encode(Array('')),
-                "caducidad"=>$request->caducidad ? $request->caducidad: NULL
+                "caducidad"=>$request->caducidad ? $request->caducidad: NULL,
+                "folder"=>$request->folder ? $request->folder : ''
             );
             $tarea->update($UpdateTarea);
 
@@ -108,10 +134,18 @@ class TareasController extends Controller
     }
 
     public function cargatareas(Request $request){
+        $folder=Folder::where('id_proyecto','=',$request->id_proyecto)->where('tipo','=','Tareas')->get();
 
-        $tarea=Tareas::where('id_proyecto',$request->id_proyecto)->get();
+        foreach($folder as $fol){
+            $listaTareas[$fol->nombre]=Tareas::where('id_proyecto','=',$request->id_proyecto)->where('folder','=',$fol->nombre)->get();
+        }
 
-        return response()->json($tarea);
+        $listaTareas['sinfolder']=Tareas::where('id_proyecto','=',$request->id_proyecto)->where('folder','=','')->get();
+
+
+       // $tarea=Tareas::where('id_proyecto',$request->id_proyecto)->get();
+
+        return response()->json($listaTareas);
 
 
     }

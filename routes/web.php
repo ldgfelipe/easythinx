@@ -13,6 +13,7 @@ use App\Http\Controllers\FolderController;
 use App\Mail\ContactoMailable;
 use App\Http\Controllers\WebbuilderController;
 use App\Http\Controllers\CabeceraBuilderController;
+use App\Http\Controllers\PlantillasController;
 use App\Models\webrouter;
 use App\Models\Webbuilder;
 /*
@@ -54,6 +55,9 @@ Route::post('/cargausuariosadmin',[Usuarios::class,'cargausuariosAdmin']);
 Route::post('/cambiosusuario',[Usuarios::class,'cambiosusuario']);
 ///api de tareas
 Route::post('/registrotareas',[TareasController::class,'registrotareas']);
+Route::post('/altaMutipleTareas',[TareasController::class,'altaMutipleTareas']);
+
+
 Route::post('cargatareas',[TareasController::class,'cargatareas']);
 Route::post('eliminatarea',[TareasController::class,'eliminatarea']);
 Route::post('subirarchivo',[ArchivosController::class,'subirarchivo']);
@@ -102,3 +106,11 @@ Route::get('/{url}',[WebbuilderController::class,'loadpage']);
 Route::post('/addfolder',[FolderController::class,'addfolder']);
 Route::post('/cargafolder',[FolderController::class,'cargafolder']);
 Route::post('/deletefolder',[FolderController::class,'deletefolder']);
+
+//plantillas
+
+Route::post('/addplantilla',[PlantillasController::class,'addplantilla']);
+Route::post('/cargaplantillas',[PlantillasController::class,'cargaplantillas']);
+Route::post('/eliminaplantilla',[PlantillasController::class,'eliminaplantilla']);
+
+Route::post('/guardacambioasplantilla',[PlantillasController::class,'guardacambioasplantilla']);
