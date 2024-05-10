@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/componenteProyectos.vue</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/componenteProyectos.vue</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>&lt;template>
+    &lt;div>
+        &lt;v-card>
+            &lt;v-card-text>
+                &lt;v-row>
+                    &lt;v-col cols="10">
+                        &lt;v-select
+                            label="Seleccione un proyecto"
+                            :items="valproy"
+                            item-text="nombre"
+                            item-value="id"
+                            @change="cambiarDatos($event)"
+                        >&lt;/v-select>
+                    &lt;/v-col>
+                    &lt;v-col cols="2">
+                        &lt;v-btn v-if="sesion.tipo_usuario>=1" class="greenD" @click="adminproyect = true"
+                            >&lt;v-icon class="white--text"
+                                >mdi-form-select&lt;/v-icon
+                            >&lt;/v-btn
+                        >
+                        &lt;v-btn class="greenD" @click="loadProyectos()"
+                            >&lt;v-icon class="white--text"
+                                >mdi-reload&lt;/v-icon
+                            >&lt;/v-btn
+                        >
+                    &lt;/v-col>
+                &lt;/v-row>
+            &lt;/v-card-text>
+        &lt;/v-card>
+
+        &lt;v-dialog v-model="adminproyect" fullscreen persistent>
+            &lt;v-card>
+                &lt;v-card-title class="greenD white--text">
+                    Administrador de Proyectos
+                    &lt;v-spacer>&lt;/v-spacer>
+                    &lt;v-btn class="white" @click="NuevoProyecto()">
+                        &lt;v-icon class="greenD--text">mdi-plus&lt;/v-icon>
+                    &lt;/v-btn>
+                    &lt;v-btn class="white" @click="adminproyect = false">
+                        &lt;v-icon class="greenD--text">mdi-close&lt;/v-icon>
+                    &lt;/v-btn>
+                &lt;/v-card-title>
+                &lt;v-card-text>
+                    &lt;v-data-table :headers="tituloproyectos" :items="proyectos">
+                        &lt;template v-slot:item.edit="{ item }">
+                            &lt;v-btn
+                                class="greenD white--text"
+                                @click="editarProyecto(item)"
+                                >&lt;v-icon>mdi-pencil&lt;/v-icon>&lt;/v-btn
+                            >
+                        &lt;/template>
+                        &lt;template v-slot:item.status="{ item }">
+                            &lt;v-chip
+                                v-if="item.status === 1"
+                                class="greenD white--text"
+                                >Activo&lt;/v-chip
+                            >
+                            &lt;v-chip
+                                v-if="item.status === 0"
+                                class="Grey white--text"
+                                >Inactivo&lt;/v-chip
+                            >
+                        &lt;/template>
+                    &lt;/v-data-table>
+
+                    &lt;v-dialog v-model="addp" max-width="500">
+                        &lt;v-card>
+                            &lt;v-card-title> Registra Proyecto &lt;/v-card-title>
+                            &lt;v-card-text>
+                                &lt;v-text-field
+                                    :readonly="perminput"
+                                    outlined
+                                    v-model="addproyect.nombre"
+                                    label="Nombre del proyecto"
+                                >&lt;/v-text-field>
+                                &lt;v-textarea
+                                    :readonly="perminput"
+                                    outlined
+                                    v-model="addproyect.desc"
+                                    label="Descripción"
+                                >&lt;/v-textarea>
+                                &lt;v-select
+                                    v-if="addproyect.action === 'editar'"
+                                    :readonly="perminput"
+                                    v-model="addproyect.id_create"
+                                    chips
+                                    label="administradores"
+                                    multiple
+                                    outlined
+                                    :items="usuarios"
+                                >&lt;/v-select>
+
+                                &lt;v-select
+                                    v-if="addproyect.action === 'editar'"
+                                    :readonly="perminput"
+                                    v-model="addproyect.id_collaborate"
+                                    chips
+                                    label="colaboradores"
+                                    multiple
+                                    outlined
+                                    :items="usuarios"
+                                >&lt;/v-select>
+
+                                &lt;v-switch
+                                    :disabled="perminput"
+                                    v-model="addproyect.status"
+                                    :label="
+                                        addproyect.status
+                                            ? 'Activo'
+                                            : 'Inactivo'
+                                    "
+                                >&lt;/v-switch>
+
+                                &lt;v-btn
+                                    v-if="
+                                        valsesion &amp;&amp;
+                                        addproyect.action === 'editar'
+                                    "
+                                    class="red white--text"
+                                    @click="eliminaProyecto(addproyect)"
+                                    >&lt;v-icon>mdi-delete&lt;/v-icon>&lt;/v-btn
+                                >
+                                &lt;v-progress-circular
+                                v-if="!stsave"
+                                :width="4"
+                                color="green"
+                                indeterminate
+                                >&lt;/v-progress-circular>
+                                &lt;v-btn
+                                    v-if="valsesion===true &amp;&amp; stsave===true"
+                                    @click="GuardarProyecto()"
+                                    class="greenD white--text"
+                                    >Guardar&lt;/v-btn
+                                >
+                            &lt;/v-card-text>
+                        &lt;/v-card>
+                    &lt;/v-dialog>
+                &lt;/v-card-text>
+            &lt;/v-card>
+        &lt;/v-dialog>
+    &lt;/div>
+&lt;/template>
+&lt;script>
+/**
+ *Componente proyectos
+ * @module components/componenteProyectos
+ *
+ */
+import  {mapState, mapActions, mapMutations} from 'vuex'
+export default {
+    /**
+     * Data de sistema
+     * @name Data
+     * @type {Object}
+     * @property {Boolean} addp  controla el estado de la ventana de dialogo para Crear un nuevo proyecto
+     * @property {Boolean} adminproyect controla el estado de la ventana de dialog Administrador de Proyectos
+     * @property {Objeto} addproyect Objeto para crear un proyecto
+     * @property {Boolean} stsave  carga el preload al guardar
+     * @property {Object} tituloproyectos Titulos de tabla de proyectos
+     *
+     */
+    data() {
+        return {
+            addp: false,
+            adminproyect: false,
+            addproyect: {},
+            stsave:true,
+            tituloproyectos: [
+                {
+                    text: "Proyecto",
+                    value: "nombre",
+                },
+                {
+                    text: "Descripción",
+                    value: "desc",
+                },
+                {
+                    text: "Status",
+                    value: "status",
+                },
+                {
+                    text: "Editar",
+                    value: "edit",
+                },
+
+            ],
+        };
+    },
+    /**
+     * @name Mounted
+     * @property Ejecuta - this.loadProyect()
+     */
+    mounted() {
+        this.loadProyectos();
+    },
+
+    /**
+     * @name Computad
+     * @property mapState([]) - proyectos, usuarios, csrf, sesion, url, socket
+     * @property valproy() - filtra el nombre del producto del array productos para mostrarlo en select
+     * @property valsesion() - Verifica si el usurio tiene permisos de administrador de proyecto
+     * @property perminput() - Verifica si el usuario tiene permisos de administrador para inputs
+     *
+     */
+    computed: {
+        ...mapState(['proyectos','usuarios','csrf', 'sesion', 'url','socket']),
+        valproy() {
+            var dataproy = [];
+            if (this.proyectos.length > 0) {
+                this.proyectos.map((e) => {
+                    if (e.status === 1) {
+                        dataproy.push({ nombre: e.nombre, id: e.id });
+                    }
+                });
+            }
+            return dataproy;
+        },
+
+        valsesion() {
+            var permiso = false;
+
+            if (
+                this.addproyect.action === "editar" &amp;&amp;
+                this.addproyect.id_create
+            ) {
+                this.addproyect.id_create.map((r) => {
+                    if (r === this.sesion.email) {
+                        permiso = true;
+                    }
+                });
+            }
+
+            if (this.addproyect.action === "crear") {
+                permiso = true;
+            }
+
+            return permiso;
+        },
+        perminput() {
+            var permiso = true;
+            if (
+                this.addproyect.action === "editar" &amp;&amp;
+                this.addproyect.id_create
+            ) {
+                this.addproyect.id_create.map((r) => {
+                    if (r === this.sesion.email) {
+                        permiso = false;
+                    }
+                });
+            }
+            if (this.addproyect.action === "crear") {
+                permiso = false;
+            }
+            return permiso;
+        },
+    },
+    /**
+     *@name Methods
+     *@property mapActions([]) - cargaProyectos, LoadProyecto
+     *@property cambiaDatos() - verifica el id de proyecto sobre el cual realiza los cambios y emite el cambio al padre $emit
+     */
+    methods: {
+        ...mapActions(['cargaProyectos','LoadProyecto']),
+        cambiarDatos(event) {
+
+            console.log('cambia dato '+event)
+
+            this.proyectos.map((p) => {
+                if (p.id === event) {
+                    this.LoadProyecto(p)
+                }
+            });
+        },
+        eliminaProyecto() {
+            if (
+                confirm(
+                    "Seguro que desea eliminar el proyecto " +
+                        this.addproyect.nombre
+                )
+            ) {
+                this.addproyect.action = "eliminar";
+                fetch(this.url + "registraproyecto", {
+                    method: "POST",
+                    headers: {
+                        "Content-type": "application/json",
+                        "X-CSRF-TOKEN": this.csrf,
+                    },
+                    body: JSON.stringify(this.addproyect),
+                })
+                    .then((res) => res.json())
+                    .then((res) => {
+                        console.log(res);
+                        this.addp = false;
+                        this.loadProyectos();
+                    });
+            }
+        },
+        NuevoProyecto() {
+            this.addproyect = {};
+            this.addproyect.action = "crear";
+            this.addproyect.status = true;
+            this.addp = true;
+        },
+        editarProyecto(item) {
+            this.addproyect = {};
+            this.addp = true;
+            this.addproyect.action = "editar";
+            this.addproyect.id = item.id;
+            this.addproyect.id_create = JSON.parse(item.id_create);
+            this.addproyect.id_collaborate = JSON.parse(item.id_collaborate);
+            this.addproyect.nombre = item.nombre;
+            this.addproyect.desc = item.desc;
+            this.addproyect.status = item.status;
+            this.addproyect.notas = item.notas;
+        },
+        loadProyectos(id) {
+            var payload = {
+                acces: "data",
+            };
+
+            var data={
+                url:this.url,
+                payload:payload,
+                csrf:this.csrf
+            }
+     this.cargaProyectos(data)
+     .then((res)=>{
+        console.log(res)
+        if(id){
+            setTimeout(()=>{
+                this.cambiarDatos(id)
+                },1500)
+
+                }
+     })
+            //// carga de proyecto con mapAction
+            this.addproyect = {};
+
+        },
+        GuardarProyecto() {
+            this.stsave=false
+            var parProyect =this.addproyect
+
+
+            fetch(this.url + "registraproyecto", {
+                method: "POST", // or 'PUT'
+                body: JSON.stringify(this.addproyect), // data can be `string` or {object}!
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": this.csrf,
+                },
+            })
+                .then((res) => res.json())
+                .catch((error) => console.error("Error:", error))
+                .then((response) => {
+                    this.addp = false;
+                    this.loadProyectos(parProyect.id);
+                        this.stsave=true
+
+                });
+        },
+    },
+
+};
+&lt;/script>
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-components_componenteProyectos.html">components/componenteProyectos</a></li><li><a href="module-store_index.html">store/index</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Thu Oct 13 2022 22:10:42 GMT-0500 (hora de verano central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

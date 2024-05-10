@@ -1,0 +1,21 @@
+{
+    "plugins":["node_modules/jsdoc-vue","node_modules/jsdoc-vuex-plugin"],
+    "source":{
+        "include":["./resources/js/"],
+        "includePattern":".(vue|js)$",
+        "excludePattern": "",
+        "type":"module"
+    },
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false
+    },
+    "tags": {
+        "allowUnknownTags": true
+      },
+    "opts": {
+        "recurse":true,
+        "destination": "./public/doc"
+    }
+
+}

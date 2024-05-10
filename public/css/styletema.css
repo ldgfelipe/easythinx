@@ -1,0 +1,22 @@
+	.contenidoText{
+		width: 100%;
+		max-width: 100%;
+		background-color: #fff;
+		color: #000;
+		font-family: arial;
+		border: solid 1px grey;
+	}
+
+	.secciones{
+		list-style: none;
+	}
+	
+
+
+.espacioeditor{
+	width: 100%;
+	max-width: 100%;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	border: solid 1px #000;
+}
