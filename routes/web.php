@@ -16,6 +16,8 @@ use App\Http\Controllers\CabeceraBuilderController;
 use App\Http\Controllers\PlantillasController;
 use App\Http\Controllers\CompresorController;
 use App\Http\Controllers\ConfiguserController;
+use App\Http\Controllers\StripePaymentController;
+use App\Http\Controllers\BuscadorController;
 use App\Models\webrouter;
 use App\Models\Webbuilder;
 /*
@@ -89,6 +91,23 @@ Route::post('guardarcambios',[ContactosController::class,'guardarcambios']);
 Route::post('cargaperfil',[Usuarios::class,'cargaperfil']);
 Route::post('guardaperfil',[Usuarios::class,'guardaperfil']);
 Route::post('cambiacontrasena',[Usuarios::class,'cambiacontrasena']);
+
+////AREA DE PAGO
+
+Route::get('/contrato',[StripePaymentController::class,'paymentarea']);
+Route::post('/contrato',[StripePaymentController::class,'paymentarea']);
+Route::get('/success',[StripePaymentController::class,'success']);
+Route::post('/success',[StripePaymentController::class,'success']);
+Route::get('/cancel',[StripePaymentController::class,'cancel']);
+Route::post('/cancel',[StripePaymentController::class,'cancel']);
+
+Route::get('/adminpagos',[StripePaymentController::class,'adminpagos']);
+Route::post('/adminpagos',[StripePaymentController::class,'adminpagos']);
+
+Route::get('/suscripcion',[StripePaymentController::class,'suscripcion']);
+Route::post('/suscripcion',[StripePaymentController::class,'suscripcion']);
+
+
 //// correos
 Route::get('contactanos',function(){
     $correo = new ContactoMailable();
@@ -125,3 +144,8 @@ Route::post('/guardacambioasplantilla',[PlantillasController::class,'guardacambi
 // cara datos de sesion
 Route::post('/configsesion',[ConfiguserController::class,'cargadatosdeSession']);
 Route::post('/updateconfigsesion',[ConfiguserController::class,'actualizaDatosdeSesion']);
+
+///buscardor general
+Route::post('/busquedagral',[BuscadorController::class,'busqueda'])->name('busquedagral');
+
+Route::get('/busquedagral',[BuscadorController::class,'busqueda'])->name('busquedagral');

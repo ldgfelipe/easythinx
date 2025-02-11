@@ -40,6 +40,9 @@
                 <v-card-title class="greenD white--text">
                     Administrador de Proyectos
                     <v-spacer></v-spacer>
+
+                    <v-btn @click="buscadorGral=true"  class="greenD--text"><v-icon>mdi-magnify</v-icon></v-btn>
+
                     <v-btn class="white" @click="NuevoProyecto()" title="Crear Nuevo Proyecto">
                         <v-icon class="greenD--text">mdi-plus</v-icon>
                     </v-btn>
@@ -81,13 +84,53 @@
 
                 <ProyectosDragDrop @closeProyectVentana="adminproyect=event" :cabeceras="tituloproyectos" @editaproy="edtproy" ></ProyectosDragDrop>
 
+                    <v-dialog v-model="buscadorGral">
+                        <v-card>
+                            <v-card-title class="greenD white--text">
+                                Buscador general
+                            </v-card-title>
+                            <v-card-text class="p-4">
+                                <v-row>
+                                    <v-col cols="12" sm="10">
+                                        <v-text-field outlined v-model="busquedaData" label="ingrese la palabra que desea buscar"></v-text-field>
+                                        {{ busquedaData }}
+                                    </v-col>
+                                    <v-col cols="12" sm="2" >
+                                        <v-btn class="greenD white--text elevation-0" @click="buscarenlabase()"><v-icon class="greenD white--text">mdi-magnify</v-icon></v-btn>
+                                    </v-col>
+                                    <v-col cols="12" sm="12">
+                                        <h2>Resultado de Folders</h2>
+                                        <v-data-table 
+                                        :headers="Hfolders" :items="resultadoBusqueda.folder">
+                                        </v-data-table>
+                                        
+                                        <h2>Resultado de Contactos</h2>
+                                        <v-data-table  :headers="Hcontactos" :items="resultadoBusqueda.contactos">
+                                        </v-data-table>
 
+                                        <h2>Resultado de Proyectos</h2>
+                                        <v-data-table  :headers="Hproyectos" :items="resultadoBusqueda.proyectos">
+                                        </v-data-table>
+
+                                        <h2>Resultado de Tareas</h2>
+                                        <v-data-table :headers="Htareas" :items="resultadoBusqueda.tareas">
+                                        </v-data-table>
+                                        
+                                        
+
+                                    </v-col>
+                                </v-row>
+
+
+                            </v-card-text>
+                        </v-card>
+                    </v-dialog>
 
 
                     <v-dialog v-model="addp" max-width="500" persistent>
                         <v-card>
                             <v-card-title class="greenD white--text">
-                                Registra Proyecto <v-spacer></v-spacer>
+                                ID:{{addproyect.id}} Registra Proyecto <v-spacer></v-spacer>  
                                 <v-btn class="white greenD--text" title="Cierra Ventana">
                                     <v-icon @click="addp = false"
                                         >mdi-close</v-icon
@@ -139,6 +182,7 @@
                                     item-text="text"
                                     item-value="value"
                                 ></v-select>
+                                
                                 <!------<v-switch
                                     :disabled="perminput"
                                     v-model="addproyect.status"
@@ -159,6 +203,18 @@
                                     title="Eliminar Proyecto"
                                     ><v-icon>mdi-delete</v-icon></v-btn
                                 >
+
+                                <v-btn
+                                    v-if="
+                                        valsesion &&
+                                        addproyect.action === 'editar'
+                                    "
+                                    class="grey white--text"
+                                    @click="archivarProyecto(addproyect)"
+                                    title="Archivar Proyecto"
+                                    ><v-icon>mdi-archive</v-icon></v-btn
+                                >
+
                                 <v-progress-circular
                                     v-if="!stsave"
                                     :width="4"
@@ -249,6 +305,48 @@ export default {
      */
     data() {
         return {
+            Hfolders:[
+            {
+                    text:'id',
+                    value:'id_proyecto'
+                },
+                {
+                    text:'nombre',
+                    value:'nombre'
+                }
+            ],
+            Hcontactos:[
+            {
+                    text:'nombre',
+                    value:'name'
+                },
+                {
+                    text:'Correo',
+                    value:'email'
+                }
+            ],
+            Hproyectos:[
+            {
+                    text:'nombre',
+                    value:'nombre'
+                },
+                {
+                    text:'Descripción',
+                    value:'desc'
+                }
+            ],
+            Htareas:[
+            {
+                    text:'titulo',
+                    value:'titulo'
+                },
+                {
+                    text:'Descripción',
+                    value:'desc'
+                }
+            ],
+            buscadorGral:false,
+            buscadorData:false,
             addp: false,
             adminproyect: false,
             plantillaData: false,
@@ -287,6 +385,13 @@ export default {
                 },
             ],
             listaPlantillas: [],
+            busquedaData:"",
+            resultadoBusqueda:{
+                folder:[],
+                contactos:[],
+                proyectos:[],
+                tareas:[]
+            }
         };
     },
     /**
@@ -375,6 +480,31 @@ export default {
     methods: {
         ...mapMutations(["cargaProyectoSelect", "cambiaLoader"]),
         ...mapActions(["cargaProyectos", "LoadProyecto"]),
+        buscarenlabase(){
+            var payload={
+                'busqueda':this.busquedaData
+            }
+            fetch(this.url + 'busquedagral',{
+                method: 'POST',
+                headers:{
+                    'Content-Type': 'application/json',
+                    "X-CSRF-TOKEN": this.csrf,
+                },
+                body:JSON.stringify(payload)
+            })
+            .then(res=>res.json())
+            .then((res)=>{
+                console.log(res)
+                this.resultadoBusqueda.folder=res.rdatos
+                .folder
+                this.resultadoBusqueda.contactos=res.rdatos
+                .contactos
+                this.resultadoBusqueda.proyectos=res.rdatos
+.                proyectos
+                this.resultadoBusqueda.tareas=res.rdatos
+              .tareas
+            })
+        },
         edtproy(event){
             this.editarProyecto(event)
     
@@ -403,6 +533,31 @@ export default {
                     this.LoadProyecto(p);
                 }
             });
+        },
+        archivarProyecto(){
+            if (
+                confirm(
+                    "Seguro que desea archivar el proyecto " +
+                        this.addproyect.nombre
+                )
+            ) {
+                this.addproyect.action = "archivar";
+                fetch(this.url + "registraproyecto", {
+                    method: "POST",
+                    headers: {
+                        "Content-type": "application/json",
+                        "X-CSRF-TOKEN": this.csrf,
+                    },
+                    body: JSON.stringify(this.addproyect),
+                })
+                    .then((res) => res.json())
+                    .then((res) => {
+                      
+                        this.addp = false;
+                        this.loadProyectos();
+                        this.cambiaLoader(true);
+                    });
+            }
         },
         eliminaProyecto() {
             if (
@@ -491,9 +646,8 @@ export default {
                     this.addp = false;
                     if (this.addproyect.status === 2) {
                         this.cargaProyectoSelect({});
-                    } else {
-                        this.loadProyectos(parProyect.id);
-                    }
+                    } 
+                    this.loadProyectos(parProyect.id);
                     this.stsave = true;
                 });
         },

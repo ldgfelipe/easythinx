@@ -26,13 +26,8 @@ class ProyectoController extends Controller
 
     }
         if($request->action=='editar'){
-   
 
             $update=proyecto::where('id','=',$request->id);
-
-
-
-
             $upproyect=Array(
                 "id_create"=>$request->id_create,
                 "id_collaborate"=>$request->id_collaborate,
@@ -41,23 +36,29 @@ class ProyectoController extends Controller
                 "status" => $request->status ? $request->status : 0,
                 "notas" => $request->notas ? $request->notas : ''
             );
-
             $update->update($upproyect);
             $respuesta=Array('res'=>'Cambios realizados');
         }
 
-
-
+        if($request->action=='archivar'){
+            $update=proyecto::where('id','=',$request->id);
+            $upproyect=Array(
+                "id_create"=>$request->id_create,
+                "id_collaborate"=>$request->id_collaborate,
+                "nombre" => $request->nombre ? $request->nombre : '',
+                "desc" => $request->desc ? $request->desc : '',
+                "status" => 6,
+                "notas" => $request->notas ? $request->notas : ''
+            );
+            $update->update($upproyect);
+            $respuesta=Array('res'=>'Cambios realizados');
+        }
         if($request->action=='eliminar'){
-
             $proy=proyecto::find($request->id);
             $proy->delete();
-
             $respuesta=Array('res'=>'Proyecto Eliminado');
         }
-
         return response()->json($respuesta);
-
     }
 
     public function cargaproyectos(Request $request){

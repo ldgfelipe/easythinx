@@ -16,20 +16,31 @@
 
             @if (Auth::check())
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/') }}/home">Dashboard</a>
+                    <a class="nav-link" href="{{ env('APP_URL')}}home">Dashboard</a>
                 </li>
+                @if(Auth::user()->tipo_usuario==1 or Auth::user()->tipo_usuario==0)
+                <li>
+                    <a class="nav-link" href="{{env('APP_URL')}}suscripcion" >Suscripción</a>
+                    </li>
+                @endif
+                @if(Auth::user()->tipo_usuario==2)
+                <li>
+                    <a class="nav-link" href="{{env('APP_URL')}}adminpagos" >Admin Pagos</a>
+                    </li>
+                @endif
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/') }}/logout">logout</a>
+                    <a class="nav-link" href="{{ env('APP_URL')}}logout">logout</a>
                 </li>
             @else
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/') }}/login">Iniciar Sesión</a>
-
+                    <a class="nav-link" href="{{ env('APP_URL')}}login">Iniciar Sesión</a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url('/') }}/register">Registro</a>
+                    <a class="nav-link" href="{{ env('APP_URL')}}register">Registro</a>
                 </li>
+            
+              
             @endif
         </ul>
 

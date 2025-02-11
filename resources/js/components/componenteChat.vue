@@ -18,7 +18,7 @@
                     <v-list-item v-for="(item, index) in listausercon" :key="index">
                         <v-list-item-title>
                             <v-icon class="greenD--text">mdi-account</v-icon>{{
-                            item.name }} <v-btn class="greenD white--text" @click="enviarNotificacion(item)">
+                            item }} <v-btn class="greenD white--text" @click="enviarNotificacion(item)">
                                 <v-icon>mdi-bell</v-icon>
                             </v-btn>
                         </v-list-item-title>
@@ -144,7 +144,7 @@ export default {
         }
     },
     mounted() {
-        console.log(this.listauser.gral)
+        
         /// carga contactos del proyecto 
         this.inichatgral();
         var payloadinises = {
@@ -153,8 +153,36 @@ export default {
         }
         this.socket.emit('inichannel', payloadinises);
         this.socket.on('message', (data) => {
-            this.listausercon = []
-            this.listausercon = data.usuarios
+            this.listauser.gral.map((e)=>{
+                data.usuarios.map((f)=>{
+                    if(f.email===e){
+                        data.usuarios.icon='conc'
+                    }else{
+                        if(f.email!==e){
+                        data.usuarios.push({
+                            email:e,
+                            icon:"unc",
+                            name:e
+                        })
+                    }
+                    }
+                })
+            })
+
+/*
+            data.usuarios.map((e)=>{
+                if(this.listauser.gral.indexOf(e.email)>0){
+                    e.icon='con'
+             }else{
+                e.icon='unc'
+             }
+
+            })
+  */         
+           console.log(data.usuarios)
+           
+           this.listausercon = []
+           this.listausercon = this.listauser.gral //data.usuarios
      
         });
         this.socket.on('loadroom', (data) => {

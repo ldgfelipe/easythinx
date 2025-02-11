@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\payments;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -23,6 +25,17 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $pay=false;
+        $getPay=payments::where('id_user',Auth::user()->id)->first();
+        /// toma datos de pago 
+        if(isset($getPay->status) and $getPay->status==1){
+            $pay=true;
+        }
+        
+        if(Auth::user()->tipo_usuario==2){
+            $pay=true;
+        }
+
+        return view('home',compact('pay'));
     }
 }

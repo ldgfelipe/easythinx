@@ -16,7 +16,7 @@
 
 
 
-                    <form method="POST" action="{{ route('register') }}">
+                    <form method="POST" action="{{ route('register') }}" onsubmit="return validacatcha()">
                         @csrf
 
                         <div class="row mb-3">
@@ -68,7 +68,13 @@
                                 <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
                             </div>
                         </div>
+                        <div class="row mb-0">
+                            <div class="col-md-6 offset-md-4">
+                              
+                            <div id="recatcha"></div>
 
+                            </div>
+                        </div>
                         <div class="row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-secondary"  style="color:#fff;">
@@ -86,4 +92,39 @@
 </div>
 </div>
 </div>
+@endsection
+@section('under')
+<script>
+    var claveId=""
+   var verifyCallback = function(response) {
+    claveId=response;
+      };
+      var widgetId1;
+      var widgetId2;
+      var onloadCallback = function() {
+        // Renders the HTML element with id 'example1' as a reCAPTCHA widget.
+        // The id of the reCAPTCHA widget is assigned to 'widgetId1'.
+        
+        grecaptcha.render('recatcha', {
+          'sitekey' : '6LdkevcpAAAAAOKuG9oaWMqHVEn5b-oslY0Zl6NN',
+          'callback' : verifyCallback,
+          'theme' : 'light'
+        });
+      };
+
+
+        function validacatcha(){
+
+            if(claveId.length>0){
+                return true
+            }else{
+                alert('Debe validad el captcha')
+                return false
+            }
+
+        }
+
+    </script>
+ <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
+ async defer>
 @endsection
