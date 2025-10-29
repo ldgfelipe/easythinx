@@ -41,7 +41,7 @@
                     Administrador de Proyectos
                     <v-spacer></v-spacer>
 
-                    <v-btn @click="buscadorGral=true"  class="greenD--text"><v-icon>mdi-magnify</v-icon></v-btn>
+                    <v-btn @click="buscadorGral=true"  class="greenD--text" ><v-icon>mdi-magnify</v-icon></v-btn>
 
                     <v-btn class="white" @click="NuevoProyecto()" title="Crear Nuevo Proyecto">
                         <v-icon class="greenD--text">mdi-plus</v-icon>
@@ -92,29 +92,46 @@
                             <v-card-text class="p-4">
                                 <v-row>
                                     <v-col cols="12" sm="10">
-                                        <v-text-field outlined v-model="busquedaData" label="ingrese la palabra que desea buscar"></v-text-field>
-                                        {{ busquedaData }}
+                                        <v-text-field outlined v-model="busquedaData" @keyup.enter="buscarenlabase()" label="ingrese la palabra que desea buscar"></v-text-field>
+                                        <v-row>
+                                            <v-col cols="12" sm="2">
+                                                <h2  :style=" tipobusca ? 'color:grey;' : 'color:black;' ">Tareas</h2>
+                                            </v-col>
+                                            <v-col cols="12" sm="1">
+                                        <v-switch v-model="tipobusca" ></v-switch> 
+                                            </v-col>
+                                        <v-col cols="12" sm="6">
+                                        <h2 :style="tipobusca ? 'color:black;' : 'color:grey;'">Proyectos</h2>
+                                        </v-col>
+                                    </v-row>
                                     </v-col>
                                     <v-col cols="12" sm="2" >
                                         <v-btn class="greenD white--text elevation-0" @click="buscarenlabase()"><v-icon class="greenD white--text">mdi-magnify</v-icon></v-btn>
                                     </v-col>
                                     <v-col cols="12" sm="12">
-                                        <h2>Resultado de Folders</h2>
-                                        <v-data-table 
-                                        :headers="Hfolders" :items="resultadoBusqueda.folder">
-                                        </v-data-table>
-                                        
-                                        <h2>Resultado de Contactos</h2>
-                                        <v-data-table  :headers="Hcontactos" :items="resultadoBusqueda.contactos">
+                                     
+
+                                        <h2>Resultado de Busqueda</h2>
+                                        <v-data-table  :headers="Hproyectos" :items="resultadoBusqueda">
+                                            
+                                            <template v-slot:item.status="{ item }">
+                                                
+                                              <span v-if="item.status === 1">Activo</span>
+                                             
+                                                <span v-if="item.status === 0">Inactivo</span>
+                                                <span v-if="item.status === 2">Conluido</span>
+                                                <span v-if="item.status === 6">Archivado</span>
+
+                                            </template>
+
+                                            <template v-slot:item.editar="{ item }">
+                                            <v-btn class="greenD white--text" @click="abreProyectoBuscado(item.id)" >Abrir</v-btn>
+
+                                        </template>
                                         </v-data-table>
 
-                                        <h2>Resultado de Proyectos</h2>
-                                        <v-data-table  :headers="Hproyectos" :items="resultadoBusqueda.proyectos">
-                                        </v-data-table>
-
-                                        <h2>Resultado de Tareas</h2>
-                                        <v-data-table :headers="Htareas" :items="resultadoBusqueda.tareas">
-                                        </v-data-table>
+                                       
+                                      
                                         
                                         
 
@@ -305,26 +322,8 @@ export default {
      */
     data() {
         return {
-            Hfolders:[
-            {
-                    text:'id',
-                    value:'id_proyecto'
-                },
-                {
-                    text:'nombre',
-                    value:'nombre'
-                }
-            ],
-            Hcontactos:[
-            {
-                    text:'nombre',
-                    value:'name'
-                },
-                {
-                    text:'Correo',
-                    value:'email'
-                }
-            ],
+           
+          
             Hproyectos:[
             {
                     text:'nombre',
@@ -333,18 +332,21 @@ export default {
                 {
                     text:'Descripción',
                     value:'desc'
-                }
-            ],
-            Htareas:[
-            {
-                    text:'titulo',
+                },
+                {
+                    text:'tarea',
                     value:'titulo'
                 },
                 {
-                    text:'Descripción',
-                    value:'desc'
+                    text:'status',
+                    value:'status'
+                },
+                {
+                    text:'',
+                    value:'editar'
                 }
             ],
+            
             buscadorGral:false,
             buscadorData:false,
             addp: false,
@@ -386,12 +388,8 @@ export default {
             ],
             listaPlantillas: [],
             busquedaData:"",
-            resultadoBusqueda:{
-                folder:[],
-                contactos:[],
-                proyectos:[],
-                tareas:[]
-            }
+            resultadoBusqueda:[],
+            tipobusca:true
         };
     },
     /**
@@ -433,7 +431,6 @@ export default {
             }
             return dataproy;
         },
-
         valsesion() {
             var permiso = false;
 
@@ -479,10 +476,20 @@ export default {
      */
     methods: {
         ...mapMutations(["cargaProyectoSelect", "cambiaLoader"]),
-        ...mapActions(["cargaProyectos", "LoadProyecto"]),
+        ...mapActions(["cargaProyectos", "LoadProyecto","loadProyectoId"]),
+
+        abreProyectoBuscado(item){
+            
+        this.loadProyectoId(item)
+        this.buscadorGral=false
+        this.adminproyect=false
+               
+        },
         buscarenlabase(){
+        if(this.busquedaData){
             var payload={
-                'busqueda':this.busquedaData
+                'busqueda':this.busquedaData,
+                'tipo':this.tipobusca
             }
             fetch(this.url + 'busquedagral',{
                 method: 'POST',
@@ -494,16 +501,14 @@ export default {
             })
             .then(res=>res.json())
             .then((res)=>{
-                console.log(res)
-                this.resultadoBusqueda.folder=res.rdatos
-                .folder
-                this.resultadoBusqueda.contactos=res.rdatos
-                .contactos
-                this.resultadoBusqueda.proyectos=res.rdatos
-.                proyectos
-                this.resultadoBusqueda.tareas=res.rdatos
-              .tareas
+                this.resultadoBusqueda=res.rdatos
+               
             })
+        }else{
+            this.resultadoBusqueda=[]
+                
+
+        }
         },
         edtproy(event){
             this.editarProyecto(event)
@@ -591,6 +596,7 @@ export default {
             this.addp = true;
         },
         editarProyecto(item) {
+            console.log(item)
             this.addproyect = {};
             this.addp = true;
             this.addproyect.action = "editar";

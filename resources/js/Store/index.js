@@ -141,6 +141,34 @@ export default {
 
     actions: {
 /**
+ * carga el proyecto por el ID a la API/cargaProyectoId ejecuta commit('cargaNotificaciones', res).
+ * @action cargaNotifi=data
+ * @param {Array} data recive payload con email.
+ * @returns {void}
+ */
+        loadProyectoId({ dispatch, commit, state },data){
+            let payload = {
+                id: data
+            }
+            fetch(state.url + "loadproyectoid", {
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json",
+                    "X-CSRF-TOKEN": state.csrf,
+                },
+                body: JSON.stringify(payload),
+            })
+                .then((res) => res.json())
+                .catch((error) => console.error("Error", error))
+                .then((resp) => {
+                   // commit('cargaProyectos', resp);
+                    dispatch('LoadProyecto', resp);
+
+                });
+
+        },
+
+/**
  * cargaNotifi carga las notificaciones llamando a la API/carganotificaciones ejecuta commit('cargaNotificaciones', res).
  * @action cargaNotifi=data
  * @param {Array} data recive payload con email.
@@ -235,7 +263,28 @@ if(res.config==='reloaddata'){
 
 
 },
+actulizaconfiguser({commit,state,dispatch},data){
 
+    var payload={
+        id:state.sesion.id,
+        configsesion:data
+    }
+    fetch(state.url+'updateconfigsesion',{
+        method:'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': state.csrf
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(res=>res.json())
+    .then((res)=>{
+        //console.log(payload)
+        //console.log(res)
+    })
+
+
+},
 /**
 * Actualiza datos de sesionde usuario 
 *@action actualizaDatosDeSesion

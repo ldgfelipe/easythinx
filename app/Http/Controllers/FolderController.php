@@ -38,7 +38,15 @@ class FolderController extends Controller
 
     }
     public function deletefolder(Request $request){
-        Folder::where('id','=',$request->id_folder)->delete();
+        Folder::where('id','=',$request->id)->delete();
         return response()->json(Array('res'=>'Folder Eliminado'));
+    }
+
+    public function cambianombrefolder(Request $request){
+
+        Folder::where('id','=',$request->id)->update(Array('nombre'=>$request->nombre));
+
+        return response()->json(Array('res'=>'Folder Nombre Cambiado'));
+
     }
 }

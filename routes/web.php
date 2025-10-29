@@ -57,6 +57,8 @@ Route::post('/cargaproyectos',[ProyectoController::class,'cargaproyectos']);
 Route::post('/cargausuarios',[Usuarios::class,'cargaUsuarios']);
 Route::post('/cargausuariosadmin',[Usuarios::class,'cargausuariosAdmin']);
 Route::post('/cambiosusuario',[Usuarios::class,'cambiosusuario']);
+Route::post('/loadproyectoid',[ProyectoController::class,'loadProyectoId']);
+Route::post('/actualizatareasproyecto',[ProyectoController::class,'actualizatareasproyecto']);
 ///api de tareas
 Route::post('/registrotareas',[TareasController::class,'registrotareas']);
 Route::post('/altaMutipleTareas',[TareasController::class,'altaMutipleTareas']);
@@ -134,6 +136,7 @@ Route::get('/{url}',[WebbuilderController::class,'loadpage']);
 Route::post('/addfolder',[FolderController::class,'addfolder']);
 Route::post('/cargafolder',[FolderController::class,'cargafolder']);
 Route::post('/deletefolder',[FolderController::class,'deletefolder']);
+Route::post('/cambianombrecarpeta',[FolderController::class,'cambianombrefolder']);
 
 //plantillas
 

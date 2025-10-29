@@ -16,8 +16,29 @@
                 >
                     <v-icon>mdi-arrow-bottom-left-bold-box</v-icon>
                 </v-btn>
+
+                <v-btn @click="cambiavistaGaleria()" v-if="!vistagaleria" class="white greenD--text" title="cambiar vista de galeria"><v-icon>mdi-grid</v-icon></v-btn>
+                 <v-btn @click="cambiavistaGaleria()"  v-if="vistagaleria" class="white greenD--text" title="cambiar vista de galeria"><v-icon>mdi-format-list-text</v-icon></v-btn>
             </v-card-title>
             <v-card-text v-if="visorFile">
+                
+<div
+    class="drop-area"
+    @dragover.prevent
+    @drop.prevent="handleDrop"
+    :class="{ 'dragover': isDragOver }"
+  >
+    <p>Arrastra y suelta archivos aquí</p>
+    <v-file-input type="file" @change="handleFileChange" v-model="addfile.archivo"  style="display: none;" ref="fileInput"></v-file-input>
+     <!----<button @click="triggerFileInput">Seleccionar archivos</button>
+   <div v-if="files.length">
+      <p>Archivos seleccionados:</p>
+      <ul>
+        <li v-for="(file, index) in files" :key="index">{{ file.name }} </li>
+      </ul>
+    </div>-->
+  </div>
+
                 <br />
                 <v-row>
                     <!----  <v-col cols="7" md="7">
@@ -49,12 +70,15 @@
                             <span>Descarga Archivo en Zip</span>
                         </v-tooltip>
                     </v-col>
-                    <v-col cols="2">
+                    <v-col cols="2" >
                         <v-btn
                             class="greenD white--text"
                             @click="addfolder = true"
                             ><v-icon>mdi-folder</v-icon></v-btn
                         >
+
+                    
+
 
                         <v-dialog v-model="addfolder" max-width="400">
                             <v-card>
@@ -80,6 +104,9 @@
                                 </v-card-text>
                             </v-card>
                         </v-dialog>
+                    </v-col>
+                    <v-col cols="8">
+                             
                     </v-col>
                 </v-row>
 
@@ -118,6 +145,7 @@
                 </v-dialog>
 
                 <ArchivosDragDrop
+                    :vistaArchivos="vistagaleria"
                     :lista="archivos"
                     :folder="folders"
                     @updatelista="ActualizaListaArchivos"
@@ -125,9 +153,11 @@
                     @eliminaArchivo="EliminarArchivo($event)"
                     @cambiapermisos="Cambiarpermisos($event)"
                 ></ArchivosDragDrop>
+                
             </v-card-text>
-            <v-card-text v-if="!visorFile">
-                <div v-if="fileselect.tipoarchivo === 'Enlace'">
+            <v-card-text v-if="!visorFile" >
+                
+                <div v-if="fileselect.tipoarchivo === 'Enlace'" >
                     <br />
                     <v-btn class="greenD white--text" @click="visorFile = true">
                         <v-icon>mdi-arrow-left</v-icon>
@@ -278,6 +308,7 @@
                         v-model="addfile.archivo"
                         label="Seleccione el Archivo"
                         filled
+                        ref="inputUpFile"
                         prepend-icon="mdi-camera"
                     ></v-file-input>
 
@@ -674,6 +705,9 @@ export default {
             allowDrag: true,
             draglist: [],
             zipcomposer: {},
+            vistagaleria:false,
+             files:[],
+             isDragOver: false,
         };
     },
     computed: {
@@ -686,6 +720,7 @@ export default {
             "archivos",
             "socket",
             "listauser",
+            "configuser"
         ]),
         /* listauserpermiso(){
             var listadogral=[]
@@ -729,12 +764,14 @@ export default {
                     text: "Acciones",
                     value: "acciones",
                 },
+               
             ];
         },
     },
     mounted() {
         this.cargaArchivos();
         this.cargacarpetas();
+        this.configuser.vistagaleria ? this.vistagaleria = this.configuser.vistagaleria : this.vistagaleria = false;
     },
 
     components: {
@@ -742,7 +779,62 @@ export default {
     },
 
     methods: {
-        ...mapActions(["loadArchivos", "cambiaStatuSnackBar"]),
+        ...mapActions(["loadArchivos", "cambiaStatuSnackBar","actulizaconfiguser"]),
+        
+         handleDrop(e) {
+      this.isDragOver = false;
+      let droppedFiles = e.dataTransfer.files;
+      if (!droppedFiles) return;
+      console.log('droppedFiles')
+      console.log(droppedFiles)
+      this.handleFiles(droppedFiles);
+    },
+    handleDragOver() { console.log('detecta handleDragOver')
+      this.isDragOver = true;
+    },
+    handleDragLeave() {
+        console.log('detecta handleDragLeave 1')
+      this.isDragOver = false;
+    },
+    handleFileChange(e) {
+     let selectedFiles = []
+        console.log('detecta handlerchange 2')
+    selectedFiles = e.target.files;
+      this.handleFiles(selectedFiles);
+      console.log('handler Change')
+      console.log(selectedFiles)
+    },
+    triggerFileInput() {
+        console.log('detecta trigger 3')
+      this.$refs.fileInput.click();
+    },
+    handleFiles(files) {
+        
+        console.log('detecta handlerFiles 4')
+        this.files=[]
+        let file=[]
+      for (let i = 0; i < files.length; i++) {
+         file = files[i];
+        // Aquí puedes agregar lógica para validar el tipo y tamaño del archivo
+        this.files.push(file);
+        this.addfile.archivo= this.files
+        console.log(this.addfile)
+        this.dialog=true
+        // Puedes enviar el archivo al servidor aquí o realizar otras acciones
+      }
+
+      
+ 
+    },        
+        cambiavistaGaleria(){
+
+            this.vistagaleria=this.vistagaleria ? false : true;
+           var configuser
+           configuser=this.configuser
+           configuser.vistagaleria=this.vistagaleria
+            this.actulizaconfiguser(configuser)
+
+        },
         encode64(p) {
             return btoa(p);
         },
@@ -822,6 +914,8 @@ export default {
         ActualizaListaArchivos(event) {
             console.log("Actualiza lista");
             console.log(event);
+                this.cargaArchivos();
+                    this.cargacarpetas();
         },
 
         GuardaCambiosPermisos(p) {
@@ -965,6 +1059,8 @@ export default {
                             //   console.log(response);
                             this.dialog = false;
                             this.cargaArchivos();
+                            this.addfile={}
+                            this.addfile.archivo = [];   
                             this.addfile.nombre = "";
                             this.addfile.archivo = "";
                             this.addfile.comentario = "";
@@ -973,6 +1069,13 @@ export default {
                                 accion: "Guarda Archivo",
                                 id: this.proyectoSelect.id,
                             };
+                          
+                                this.$refs.inputUpFile.value=null
+                          
+                                
+                        
+
+
                             this.socket.emit(
                                 "actualiza_archivo",
                                 cambioArchivo
@@ -1173,7 +1276,7 @@ export default {
                     this.cargacarpetas();
                 });
         },
-        cambiarnombreCarpeta() {},
+        
     },
     watch: {
         folders() {

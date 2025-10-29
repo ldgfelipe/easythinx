@@ -6206,10 +6206,13 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       archivoselect: {},
       allowDrag: true,
       draglist: [],
-      zipcomposer: {}
+      zipcomposer: {},
+      vistagaleria: false,
+      files: [],
+      isDragOver: false
     };
   },
-  computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapState)(["proyectoSelect", "userproy", "url", "csrf", "sesion", "archivos", "socket", "listauser"])), {}, {
+  computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapState)(["proyectoSelect", "userproy", "url", "csrf", "sesion", "archivos", "socket", "listauser", "configuser"])), {}, {
     /* listauserpermiso(){
         var listadogral=[]
         this.listauser.gral.map((e)=>{
@@ -6251,11 +6254,61 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
   mounted: function mounted() {
     this.cargaArchivos();
     this.cargacarpetas();
+    this.configuser.vistagaleria ? this.vistagaleria = this.configuser.vistagaleria : this.vistagaleria = false;
   },
   components: {
     draggable: (vuedraggable__WEBPACK_IMPORTED_MODULE_0___default())
   },
-  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapActions)(["loadArchivos", "cambiaStatuSnackBar"])), {}, {
+  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapActions)(["loadArchivos", "cambiaStatuSnackBar", "actulizaconfiguser"])), {}, {
+    handleDrop: function handleDrop(e) {
+      this.isDragOver = false;
+      var droppedFiles = e.dataTransfer.files;
+      if (!droppedFiles) return;
+      console.log('droppedFiles');
+      console.log(droppedFiles);
+      this.handleFiles(droppedFiles);
+    },
+    handleDragOver: function handleDragOver() {
+      console.log('detecta handleDragOver');
+      this.isDragOver = true;
+    },
+    handleDragLeave: function handleDragLeave() {
+      console.log('detecta handleDragLeave 1');
+      this.isDragOver = false;
+    },
+    handleFileChange: function handleFileChange(e) {
+      var selectedFiles = [];
+      console.log('detecta handlerchange 2');
+      selectedFiles = e.target.files;
+      this.handleFiles(selectedFiles);
+      console.log('handler Change');
+      console.log(selectedFiles);
+    },
+    triggerFileInput: function triggerFileInput() {
+      console.log('detecta trigger 3');
+      this.$refs.fileInput.click();
+    },
+    handleFiles: function handleFiles(files) {
+      console.log('detecta handlerFiles 4');
+      this.files = [];
+      var file = [];
+      for (var i = 0; i < files.length; i++) {
+        file = files[i];
+        // Aquí puedes agregar lógica para validar el tipo y tamaño del archivo
+        this.files.push(file);
+        this.addfile.archivo = this.files;
+        console.log(this.addfile);
+        this.dialog = true;
+        // Puedes enviar el archivo al servidor aquí o realizar otras acciones
+      }
+    },
+    cambiavistaGaleria: function cambiavistaGaleria() {
+      this.vistagaleria = this.vistagaleria ? false : true;
+      var configuser;
+      configuser = this.configuser;
+      configuser.vistagaleria = this.vistagaleria;
+      this.actulizaconfiguser(configuser);
+    },
     encode64: function encode64(p) {
       return btoa(p);
     },
@@ -6332,6 +6385,8 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
     ActualizaListaArchivos: function ActualizaListaArchivos(event) {
       console.log("Actualiza lista");
       console.log(event);
+      this.cargaArchivos();
+      this.cargacarpetas();
     },
     GuardaCambiosPermisos: function GuardaCambiosPermisos(p) {
       this.GuardarCambiosArchivo(p);
@@ -6440,6 +6495,8 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
             //   console.log(response);
             _this6.dialog = false;
             _this6.cargaArchivos();
+            _this6.addfile = {};
+            _this6.addfile.archivo = [];
             _this6.addfile.nombre = "";
             _this6.addfile.archivo = "";
             _this6.addfile.comentario = "";
@@ -6448,6 +6505,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
               accion: "Guarda Archivo",
               id: _this6.proyectoSelect.id
             };
+            _this6.$refs.inputUpFile.value = null;
             _this6.socket.emit("actualiza_archivo", cambioArchivo);
           })["catch"](function (error) {
             // console.log(error);
@@ -6638,8 +6696,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
         _this12.cargaArchivos();
         _this12.cargacarpetas();
       });
-    },
-    cambiarnombreCarpeta: function cambiarnombreCarpeta() {}
+    }
   }),
   watch: {
     folders: function folders() {
@@ -7326,33 +7383,21 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
    */
   data: function data() {
     return {
-      Hfolders: [{
-        text: 'id',
-        value: 'id_proyecto'
-      }, {
-        text: 'nombre',
-        value: 'nombre'
-      }],
-      Hcontactos: [{
-        text: 'nombre',
-        value: 'name'
-      }, {
-        text: 'Correo',
-        value: 'email'
-      }],
       Hproyectos: [{
         text: 'nombre',
         value: 'nombre'
       }, {
         text: 'Descripción',
         value: 'desc'
-      }],
-      Htareas: [{
-        text: 'titulo',
+      }, {
+        text: 'tarea',
         value: 'titulo'
       }, {
-        text: 'Descripción',
-        value: 'desc'
+        text: 'status',
+        value: 'status'
+      }, {
+        text: '',
+        value: 'editar'
       }],
       buscadorGral: false,
       buscadorData: false,
@@ -7386,12 +7431,8 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       }],
       listaPlantillas: [],
       busquedaData: "",
-      resultadoBusqueda: {
-        folder: [],
-        contactos: [],
-        proyectos: [],
-        tareas: []
-      }
+      resultadoBusqueda: [],
+      tipobusca: true
     };
   },
   /**
@@ -7461,28 +7502,34 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
    *@property mapActions([]) - cargaProyectos, LoadProyecto
    *@property cambiaDatos() - verifica el id de proyecto sobre el cual realiza los cambios y emite el cambio al padre $emit
    */
-  methods: _objectSpread(_objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapMutations)(["cargaProyectoSelect", "cambiaLoader"])), (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapActions)(["cargaProyectos", "LoadProyecto"])), {}, {
+  methods: _objectSpread(_objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapMutations)(["cargaProyectoSelect", "cambiaLoader"])), (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapActions)(["cargaProyectos", "LoadProyecto", "loadProyectoId"])), {}, {
+    abreProyectoBuscado: function abreProyectoBuscado(item) {
+      this.loadProyectoId(item);
+      this.buscadorGral = false;
+      this.adminproyect = false;
+    },
     buscarenlabase: function buscarenlabase() {
       var _this3 = this;
-      var payload = {
-        'busqueda': this.busquedaData
-      };
-      fetch(this.url + 'busquedagral', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          "X-CSRF-TOKEN": this.csrf
-        },
-        body: JSON.stringify(payload)
-      }).then(function (res) {
-        return res.json();
-      }).then(function (res) {
-        console.log(res);
-        _this3.resultadoBusqueda.folder = res.rdatos.folder;
-        _this3.resultadoBusqueda.contactos = res.rdatos.contactos;
-        _this3.resultadoBusqueda.proyectos = res.rdatos.proyectos;
-        _this3.resultadoBusqueda.tareas = res.rdatos.tareas;
-      });
+      if (this.busquedaData) {
+        var payload = {
+          'busqueda': this.busquedaData,
+          'tipo': this.tipobusca
+        };
+        fetch(this.url + 'busquedagral', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            "X-CSRF-TOKEN": this.csrf
+          },
+          body: JSON.stringify(payload)
+        }).then(function (res) {
+          return res.json();
+        }).then(function (res) {
+          _this3.resultadoBusqueda = res.rdatos;
+        });
+      } else {
+        this.resultadoBusqueda = [];
+      }
     },
     edtproy: function edtproy(event) {
       this.editarProyecto(event);
@@ -7560,6 +7607,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       this.addp = true;
     },
     editarProyecto: function editarProyecto(item) {
+      console.log(item);
       this.addproyect = {};
       this.addp = true;
       this.addproyect.action = "editar";
@@ -8223,28 +8271,105 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       IntoFolder: false,
       fname: "",
       search: "",
-      filtroStatus: 1
+      filtroStatus: 1,
+      Nname: "",
+      gTotaltareas: {},
+      gTotalproceso: {},
+      gTotalfinalizados: {}
     };
   },
   computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapState)(["configuser", "proyectos", "usuarios", "csrf", "sesion", "url", "socket"])),
   created: function created() {
+    var _this = this;
     this.inifolderproyect();
+    this.$nextTick(function () {
+      _this.actualizatodalistaTareaProyectos();
+    }, 1000);
   },
   methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapActions)(["actualizaDatosDeSesion", "cargaProyectos", "LoadProyecto"])), {}, {
+    actualizatareasproyecto: function actualizatareasproyecto(p) {
+      var _this2 = this;
+      var payload = {
+        id_proyecto: p.id
+      };
+      fetch(this.url + "actualizatareasproyecto", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+          "X-CSRF-TOKEN": this.csrf
+        },
+        body: JSON.stringify(payload)
+      }).then(function (res) {
+        return res.json();
+      })["catch"](function (error) {
+        return console.error("Error", error);
+      }).then(function (resp) {
+        console.log(resp);
+        p.ttareas = resp.length;
+        p.Tproceso = 0;
+        p.Tfinalizado = 0;
+        /// cuenta tareas 
+        for (var t = 0; t < resp.length; t++) {
+          if (resp[t].status === 0) {
+            console.log('contando 0');
+            p.Tproceso = p.Tproceso + 1;
+          }
+          if (resp[t].status === 1) {
+            console.log('contando 1');
+            p.Tfinalizado = p.Tfinalizado + 1;
+          }
+        }
+        _this2.actualizatodo();
+      });
+    },
+    actualizatodalistaTareaProyectos: function actualizatodalistaTareaProyectos() {
+      var _this3 = this;
+      this.gTotaltareas = 0;
+      this.gTotalpendientes = 0;
+      this.gTotalfinalizados = 0;
+      Object.keys(this.listafolders).forEach(function (i) {
+        _this3.listafolders[i].map(function (e) {
+          _this3.$nextTick(function () {
+            _this3.actualizatareasproyecto(e);
+          });
+        });
+      });
+    },
+    eliminafolder: function eliminafolder() {
+      if (confirm('¿Seguro que deseas eliminar la carpeta?')) {
+        delete this.listafolders[this.fname];
+      }
+      this.actualizatodo();
+      this.IntoFolder = false;
+    },
+    cambiarNombre: function cambiarNombre() {
+      if (this.Nname !== this.fname) {
+        this.$set(this.listafolders, [this.Nname], this.listafolders[this.fname]);
+        delete this.listafolders[this.fname];
+        this.actualizatodo();
+      } else {
+        console.log('no hay cambios');
+      }
+      // delete this.listafolders[this.fname]
+
+      this.IntoFolder = false;
+    },
     filteredList: function filteredList(p) {
-      var _this = this;
+      var _this4 = this;
       return p.filter(function (post) {
-        return post.nombre.toLowerCase().includes(_this.search.toLowerCase());
+        return post.nombre.toLowerCase().includes(_this4.search.toLowerCase());
       });
     },
     openProyecto: function openProyecto(it) {
       this.$emit("closeProyectVentana", false);
       this.LoadProyecto(it);
     },
-    muestaVentanaInfo: function muestaVentanaInfo(item, fn) {
+    muestaVentanaInfo: function muestaVentanaInfo(item, fn, pos) {
       this.IntoFolder = true;
       this.muestraIntoFolder = item;
       this.fname = fn;
+      this.Nname = fn;
+      this.indexfol = pos;
     },
     cambiaStatusCarpeta: function cambiaStatusCarpeta(f) {
       this.statusfolders[f] ? this.$set(this.statusfolders, f, false) : this.$set(this.statusfolders, f, true);
@@ -8346,7 +8471,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       }
     },
     actualizatodo: function actualizatodo() {
-      var _this2 = this;
+      var _this5 = this;
       var posicion = 0;
       if (Object.keys(this.listafolders).length === 0) {
         this.$set(this.listafolders, 'sf', []);
@@ -8362,18 +8487,18 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
         }
       }
       this.proyectos.map(function (p) {
-        _this2.loaderlista = true;
+        _this5.loaderlista = true;
         var additem = 1;
         for (var copfol in copialistafolder) {
           if (copialistafolder[copfol].find(function (f) {
             return f ? f.id === p.id ? true : false : false;
           })) {
             additem = 0;
-            _this2.updatefolderlist(p, copfol, 'add', posicion);
+            _this5.updatefolderlist(p, copfol, 'add', posicion);
           }
         }
         if (additem === 1) {
-          _this2.updatefolderlist(p, 'sf', 'add', posicion);
+          _this5.updatefolderlist(p, 'sf', 'add', posicion);
         }
         posicion = posicion + 1;
       });
@@ -8391,7 +8516,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
   watch: {
     proyectos: function proyectos() {
       /// funcion actualiza todo lo existente
-      this.actualizatodo();
+      //  this.actualizatodo()
     }
   }
 });
@@ -8423,14 +8548,28 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
   data: function data() {
     return {
       listado: {},
-      loaderlista: false
+      loaderlista: false,
+      folderselect: {},
+      editfol: false,
+      isDragOver: false,
+      files: []
     };
   },
   mounted: function mounted() {
     this.cargalistado();
   },
-  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapState)(["proyectoSelect", "userproy", "url", "csrf", "sesion", "archivos", "socket", "listauser"])),
+  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapState)(["proyectoSelect", "userproy", "url", "csrf", "sesion", "archivos", "socket", "listauser", "configuser"])),
   methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapActions)(['validapermiso'])), {}, {
+    editfolder: function editfolder(p) {
+      this.folderselect = p;
+      this.editfol = true;
+    },
+    onDrop: function onDrop(event) {
+      console.log(event);
+    },
+    encode64: function encode64(p) {
+      return btoa(p);
+    },
     validapermiso: function validapermiso(data) {
       var _this = this;
       var resp = true;
@@ -8458,6 +8597,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
     },
     starDrag: function starDrag(event, item) {
       console.log(item);
+      console.log(event);
       event.dataTransfer.dropEffect = 'move';
       event.dataTransfer.effectAllowed = 'move';
       event.dataTransfer.setData('itemID', item.id);
@@ -8465,6 +8605,8 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
     },
     endrop: function endrop(event, list) {
       var _this3 = this;
+      console.log(event);
+      console.log(list);
       this.loaderlista = true;
       var itemID = event.dataTransfer.getData('itemID');
       var profolder = event.dataTransfer.getData('profolder');
@@ -8526,11 +8668,50 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
         _this5.cargalistado();
         _this5.loaderlista = false;
       });
+    },
+    cambianombredecarpeta: function cambianombredecarpeta() {
+      var _this6 = this;
+      var payload = {
+        id: this.folderselect.id,
+        nombre: this.folderselect.nombre
+      };
+      fetch(this.url + "cambianombrecarpeta", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+          "X-CSRF-TOKEN": this.csrf
+        },
+        body: JSON.stringify(payload)
+      }).then(function (res) {
+        return res.json();
+      }).then(function (res) {
+        _this6.editfol = false | _this6.$emit('updatelista', true);
+      });
+    },
+    EliminarCarpetaVacia: function EliminarCarpetaVacia(p) {
+      var _this7 = this;
+      var payload = {
+        id: p.id
+      };
+      fetch(this.url + "deletefolder", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+          "X-CSRF-TOKEN": this.csrf
+        },
+        body: JSON.stringify(payload)
+      }).then(function (res) {
+        return res.json();
+      }).then(function (res) {
+        console.log(res);
+        _this7.$emit('updatelista', true);
+      });
     }
   }),
   props: {
     lista: {},
-    folder: {}
+    folder: {},
+    vistaArchivos: false
   },
   watch: {
     lista: function lista() {
@@ -9946,7 +10127,7 @@ var render = function render() {
     }
   }, [_c("v-card-title", {
     staticClass: "greenD white--text"
-  }, [_vm._v("\n            Archivos "), _c("v-spacer"), _vm._v(" "), _c("v-btn", {
+  }, [_vm._v("\n                Archivos "), _c("v-spacer"), _vm._v(" "), _c("v-btn", {
     staticClass: "white greenD--text",
     on: {
       click: function click($event) {
@@ -9970,7 +10151,59 @@ var render = function render() {
         return _vm.minimizar();
       }
     }
-  }, [_c("v-icon", [_vm._v("mdi-arrow-bottom-left-bold-box")])], 1)], 1), _vm._v(" "), _vm.visorFile ? _c("v-card-text", [_c("br"), _vm._v(" "), _c("v-row", [_c("v-col", {
+  }, [_c("v-icon", [_vm._v("mdi-arrow-bottom-left-bold-box")])], 1), _vm._v(" "), !_vm.vistagaleria ? _c("v-btn", {
+    staticClass: "white greenD--text",
+    attrs: {
+      title: "cambiar vista de galeria"
+    },
+    on: {
+      click: function click($event) {
+        return _vm.cambiavistaGaleria();
+      }
+    }
+  }, [_c("v-icon", [_vm._v("mdi-grid")])], 1) : _vm._e(), _vm._v(" "), _vm.vistagaleria ? _c("v-btn", {
+    staticClass: "white greenD--text",
+    attrs: {
+      title: "cambiar vista de galeria"
+    },
+    on: {
+      click: function click($event) {
+        return _vm.cambiavistaGaleria();
+      }
+    }
+  }, [_c("v-icon", [_vm._v("mdi-format-list-text")])], 1) : _vm._e()], 1), _vm._v(" "), _vm.visorFile ? _c("v-card-text", [_c("div", {
+    staticClass: "drop-area",
+    "class": {
+      dragover: _vm.isDragOver
+    },
+    on: {
+      dragover: function dragover($event) {
+        $event.preventDefault();
+      },
+      drop: function drop($event) {
+        $event.preventDefault();
+        return _vm.handleDrop.apply(null, arguments);
+      }
+    }
+  }, [_c("p", [_vm._v("Arrastra y suelta archivos aquí")]), _vm._v(" "), _c("v-file-input", {
+    ref: "fileInput",
+    staticStyle: {
+      display: "none"
+    },
+    attrs: {
+      type: "file"
+    },
+    on: {
+      change: _vm.handleFileChange
+    },
+    model: {
+      value: _vm.addfile.archivo,
+      callback: function callback($$v) {
+        _vm.$set(_vm.addfile, "archivo", $$v);
+      },
+      expression: "addfile.archivo"
+    }
+  })], 1), _vm._v(" "), _c("br"), _vm._v(" "), _c("v-row", [_c("v-col", {
     attrs: {
       cols: "2"
     }
@@ -10014,7 +10247,7 @@ var render = function render() {
       },
       expression: "addfolder"
     }
-  }, [_c("v-card", [_c("v-card-title", [_vm._v("\n                                Folder "), _c("v-spacer"), _vm._v(" "), _c("v-btn", {
+  }, [_c("v-card", [_c("v-card-title", [_vm._v("\n                                    Folder "), _c("v-spacer"), _vm._v(" "), _c("v-btn", {
     staticClass: "greenD white--text",
     on: {
       click: function click($event) {
@@ -10036,7 +10269,11 @@ var render = function render() {
         return _vm.crearfolder();
       }
     }
-  }, [_c("v-icon", [_vm._v("mdi-folder-plus")])], 1), _vm._v(" "), _c("v-btn", [_c("v-icon")], 1)], 1)], 1)], 1)], 1)], 1), _vm._v(" "), _c("v-dialog", {
+  }, [_c("v-icon", [_vm._v("mdi-folder-plus")])], 1), _vm._v(" "), _c("v-btn", [_c("v-icon")], 1)], 1)], 1)], 1)], 1), _vm._v(" "), _c("v-col", {
+    attrs: {
+      cols: "8"
+    }
+  })], 1), _vm._v(" "), _c("v-dialog", {
     attrs: {
       "max-width": "600",
       persistent: ""
@@ -10050,7 +10287,7 @@ var render = function render() {
     }
   }, [_c("v-card", [_c("v-card-title", {
     staticClass: "greenD text-white"
-  }, [_vm._v("\n                        Permisos de archivo "), _c("v-spacer")], 1), _vm._v(" "), _c("v-card-text", [_c("v-data-table", {
+  }, [_vm._v("\n                            Permisos de archivo "), _c("v-spacer")], 1), _vm._v(" "), _c("v-card-text", [_c("v-data-table", {
     attrs: {
       headers: _vm.cabecerausers,
       items: _vm.listauserpermiso
@@ -10093,6 +10330,7 @@ var render = function render() {
     }
   }, [_c("v-icon", [_vm._v("mdi-content-save")])], 1)], 1)], 1)], 1), _vm._v(" "), _c("ArchivosDragDrop", {
     attrs: {
+      vistaArchivos: _vm.vistagaleria,
       lista: _vm.archivos,
       folder: _vm.folders
     },
@@ -10145,7 +10383,7 @@ var render = function render() {
       href: _vm.fileselect.urlArchivo,
       target: "_blank"
     }
-  }, [_vm._v("Abrir\n                    "), _c("v-icon", {
+  }, [_vm._v("Abrir\n                        "), _c("v-icon", {
     staticClass: "white--text"
   }, [_vm._v("mdi-open-in-new")])], 1), _vm._v(" "), _c("br"), _vm._v(" "), _c("br"), _vm._v(" "), _c("v-btn", {
     staticClass: "greenD white--text",
@@ -10154,7 +10392,7 @@ var render = function render() {
         return _vm.GuardarCambiosArchivo(_vm.fileselect);
       }
     }
-  }, [_vm._v("\n                    Guardar Cambios de Enlace")])], 1) : _vm._e(), _vm._v(" "), _vm.fileselect.tipoarchivo !== "Enlace" ? _c("div", [_c("v-btn", {
+  }, [_vm._v("\n                        Guardar Cambios de Enlace")])], 1) : _vm._e(), _vm._v(" "), _vm.fileselect.tipoarchivo !== "Enlace" ? _c("div", [_c("v-btn", {
     staticClass: "greenD white--text",
     on: {
       click: function click($event) {
@@ -10209,7 +10447,7 @@ var render = function render() {
     }
   }, [_c("v-card", [_c("v-card-title", {
     staticClass: "greenD white--text"
-  }, [_vm._v("\n                Nueva Archivo "), _c("v-spacer"), _vm._v(" "), _c("v-btn", {
+  }, [_vm._v("\n                    Nueva Archivo "), _c("v-spacer"), _vm._v(" "), _c("v-btn", {
     staticClass: "white greenD--text",
     on: {
       click: function click($event) {
@@ -10267,6 +10505,7 @@ var render = function render() {
       expression: "tipoupload"
     }
   }), _vm._v(" "), _c("br"), _vm._v(" "), _vm.tipoupload === "Archivo" ? _c("v-file-input", {
+    ref: "inputUpFile",
     attrs: {
       multiple: "",
       label: "Seleccione el Archivo",
@@ -10439,7 +10678,7 @@ var render = function render() {
       },
       expression: "fileselect.nombre"
     }
-  }) : _vm._e(), _vm._v(" "), _c("hr"), _vm._v("\n\n                        URL:" + _vm._s(_vm.fileselect.urlArchivo) + "\n                        "), _c("hr"), _vm._v("\n                        Extensión:" + _vm._s(_vm.fileselect.urlArchivo) + "\n                        "), _c("hr"), _vm._v(" "), _c("v-textarea", {
+  }) : _vm._e(), _vm._v(" "), _c("hr"), _vm._v("\n\n                            URL:" + _vm._s(_vm.fileselect.urlArchivo) + "\n                            "), _c("hr"), _vm._v("\n                            Extensión:" + _vm._s(_vm.fileselect.urlArchivo) + "\n                            "), _c("hr"), _vm._v(" "), _c("v-textarea", {
     attrs: {
       outlined: "",
       disabled: !_vm.proyectoSelect.adminproy
@@ -10454,7 +10693,7 @@ var render = function render() {
   }), _vm._v(" "), _vm.validapermiso({
     val: _vm.fileselect,
     tp: "descargar"
-  }) ? _c("div", [_vm._v("\n                            Descargar:\n                            "), _c("v-btn", {
+  }) ? _c("div", [_vm._v("\n                                Descargar:\n                                "), _c("v-btn", {
     staticClass: "primary",
     attrs: {
       elevation: "2",
@@ -10468,7 +10707,7 @@ var render = function render() {
     }
   }, [_c("v-icon", {
     staticClass: "white--text"
-  }, [_vm._v("mdi-download")])], 1)], 1) : _vm._e(), _vm._v(" "), _c("hr"), _vm._v(" "), (_vm.proyectoSelect.adminproy === true ? true : _vm.sesion.id === _vm.fileselect.user) ? _c("div", [_vm._v("\n                            Eliminar Archivo:\n\n                            "), _c("v-btn", {
+  }, [_vm._v("mdi-download")])], 1)], 1) : _vm._e(), _vm._v(" "), _c("hr"), _vm._v(" "), (_vm.proyectoSelect.adminproy === true ? true : _vm.sesion.id === _vm.fileselect.user) ? _c("div", [_vm._v("\n                                Eliminar Archivo:\n\n                                "), _c("v-btn", {
     staticClass: "error",
     attrs: {
       elevation: "2",
@@ -10502,7 +10741,7 @@ var render = function render() {
         return _vm.GuardarCambiosArchivo(_vm.fileselect);
       }
     }
-  }, [_vm._v("\n                                Guardar Cambios de Archivo")])], 1) : _vm._e()], 1) : _vm._e()], 1)], 1)], 1), _vm._v(" "), _c("v-dialog", {
+  }, [_vm._v("\n                                    Guardar Cambios de Archivo")])], 1) : _vm._e()], 1) : _vm._e()], 1)], 1)], 1), _vm._v(" "), _c("v-dialog", {
     attrs: {
       persistent: "",
       fullscreen: ""
@@ -10559,7 +10798,7 @@ var render = function render() {
     }
   }, [_c("v-card", [_c("v-card-title", {
     staticClass: "greenD white--text"
-  }, [_vm._v("\n                Descargar Archivo "), _c("v-spacer"), _vm._v(" "), _c("v-btn", {
+  }, [_vm._v("\n                    Descargar Archivo "), _c("v-spacer"), _vm._v(" "), _c("v-btn", {
     staticClass: "greenD white--text",
     on: {
       click: function click($event) {
@@ -11594,6 +11833,12 @@ var render = function render() {
       outlined: "",
       label: "ingrese la palabra que desea buscar"
     },
+    on: {
+      keyup: function keyup($event) {
+        if (!$event.type.indexOf("key") && _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")) return null;
+        return _vm.buscarenlabase();
+      }
+    },
     model: {
       value: _vm.busquedaData,
       callback: function callback($$v) {
@@ -11601,7 +11846,34 @@ var render = function render() {
       },
       expression: "busquedaData"
     }
-  }), _vm._v("\n                                    " + _vm._s(_vm.busquedaData) + "\n                                ")], 1), _vm._v(" "), _c("v-col", {
+  }), _vm._v(" "), _c("v-row", [_c("v-col", {
+    attrs: {
+      cols: "12",
+      sm: "2"
+    }
+  }, [_c("h2", {
+    style: _vm.tipobusca ? "color:grey;" : "color:black;"
+  }, [_vm._v("Tareas")])]), _vm._v(" "), _c("v-col", {
+    attrs: {
+      cols: "12",
+      sm: "1"
+    }
+  }, [_c("v-switch", {
+    model: {
+      value: _vm.tipobusca,
+      callback: function callback($$v) {
+        _vm.tipobusca = $$v;
+      },
+      expression: "tipobusca"
+    }
+  })], 1), _vm._v(" "), _c("v-col", {
+    attrs: {
+      cols: "12",
+      sm: "6"
+    }
+  }, [_c("h2", {
+    style: _vm.tipobusca ? "color:black;" : "color:grey;"
+  }, [_vm._v("Proyectos")])])], 1)], 1), _vm._v(" "), _c("v-col", {
     attrs: {
       cols: "12",
       sm: "2"
@@ -11620,26 +11892,31 @@ var render = function render() {
       cols: "12",
       sm: "12"
     }
-  }, [_c("h2", [_vm._v("Resultado de Folders")]), _vm._v(" "), _c("v-data-table", {
-    attrs: {
-      headers: _vm.Hfolders,
-      items: _vm.resultadoBusqueda.folder
-    }
-  }), _vm._v(" "), _c("h2", [_vm._v("Resultado de Contactos")]), _vm._v(" "), _c("v-data-table", {
-    attrs: {
-      headers: _vm.Hcontactos,
-      items: _vm.resultadoBusqueda.contactos
-    }
-  }), _vm._v(" "), _c("h2", [_vm._v("Resultado de Proyectos")]), _vm._v(" "), _c("v-data-table", {
+  }, [_c("h2", [_vm._v("Resultado de Busqueda")]), _vm._v(" "), _c("v-data-table", {
     attrs: {
       headers: _vm.Hproyectos,
-      items: _vm.resultadoBusqueda.proyectos
-    }
-  }), _vm._v(" "), _c("h2", [_vm._v("Resultado de Tareas")]), _vm._v(" "), _c("v-data-table", {
-    attrs: {
-      headers: _vm.Htareas,
-      items: _vm.resultadoBusqueda.tareas
-    }
+      items: _vm.resultadoBusqueda
+    },
+    scopedSlots: _vm._u([{
+      key: "item.status",
+      fn: function fn(_ref) {
+        var item = _ref.item;
+        return [item.status === 1 ? _c("span", [_vm._v("Activo")]) : _vm._e(), _vm._v(" "), item.status === 0 ? _c("span", [_vm._v("Inactivo")]) : _vm._e(), _vm._v(" "), item.status === 2 ? _c("span", [_vm._v("Conluido")]) : _vm._e(), _vm._v(" "), item.status === 6 ? _c("span", [_vm._v("Archivado")]) : _vm._e()];
+      }
+    }, {
+      key: "item.editar",
+      fn: function fn(_ref2) {
+        var item = _ref2.item;
+        return [_c("v-btn", {
+          staticClass: "greenD white--text",
+          on: {
+            click: function click($event) {
+              return _vm.abreProyectoBuscado(item.id);
+            }
+          }
+        }, [_vm._v("Abrir")])];
+      }
+    }])
   })], 1)], 1)], 1)], 1)], 1), _vm._v(" "), _c("v-dialog", {
     attrs: {
       "max-width": "500",
@@ -12737,28 +13014,28 @@ var render = function render() {
         _vm.filtroStatus = 1;
       }
     }
-  }, [_vm._v("Activos")]), _vm._v(" "), _c("v-btn", {
+  }, [_vm._v("\n            Activos\n        ")]), _vm._v(" "), _c("v-btn", {
     "class": _vm.filtroStatus === 0 ? "green white--text" : "black--text",
     on: {
       click: function click($event) {
         _vm.filtroStatus = 0;
       }
     }
-  }, [_vm._v("Inactivo")]), _vm._v(" "), _c("v-btn", {
+  }, [_vm._v("\n            Inactivo\n        ")]), _vm._v(" "), _c("v-btn", {
     "class": _vm.filtroStatus === 6 ? "green white--text" : "black--text",
     on: {
       click: function click($event) {
         _vm.filtroStatus = 6;
       }
     }
-  }, [_vm._v("Archivados")]), _vm._v(" "), _c("v-btn", {
+  }, [_vm._v("\n            Archivados\n        ")]), _vm._v(" "), _c("v-btn", {
     "class": _vm.filtroStatus === 2 ? "green white--text" : "black--text",
     on: {
       click: function click($event) {
         _vm.filtroStatus = 2;
       }
     }
-  }, [_vm._v("Concluido")]), _vm._v(" "), _vm.loaderlista ? _c("v-progress-circular", {
+  }, [_vm._v("\n            Concluido\n        ")]), _vm._v(" "), _vm.loaderlista ? _c("v-progress-circular", {
     attrs: {
       indeterminate: ""
     }
@@ -12800,7 +13077,7 @@ var render = function render() {
     }
   }, [_vm._v("Crear")])], 1)], 1)], 1), _vm._v(" "), _c("div", {
     staticClass: "container"
-  }, [_c("v-row", _vm._l(_vm.listafolders, function (key, folder) {
+  }, [_c("v-row", _vm._l(_vm.listafolders, function (key, folder, pos) {
     return !_vm.loaderlista ? _c("v-col", {
       key: folder + "-seccion",
       staticClass: "carpetastyle",
@@ -12832,7 +13109,17 @@ var render = function render() {
       }
     }, [_c("v-icon", {
       staticClass: "greenD--text"
-    }, [_vm._v(_vm._s(_vm.statusfolders[folder] ? "mdi-minus-box" : "mdi-file-tree-outline"))])], 1), _vm._v(" " + _vm._s(folder === "sf" ? "" : folder) + " (" + _vm._s(Object.keys(key).length) + ")\n                    ")], 1), _vm._v(" "), _vm.statusfolders[folder] ? _c("v-row", _vm._l(_vm.filteredList(key), function (item, index) {
+    }, [_vm._v("\n                                " + _vm._s(_vm.statusfolders[folder] ? "mdi-minus-box" : "mdi-file-tree-outline") + "\n                            ")])], 1), _vm._v(" "), _c("v-btn", [_vm._v("\n                            " + _vm._s(folder === "sf" ? "" : folder) + " \n                        ")]), _vm._v("    \n\n                        (" + _vm._s(Object.keys(key).length) + ")  \n                     \n                        "), folder !== "sf" ? _c("v-btn", {
+      staticClass: "white greenD--text",
+      attrs: {
+        title: "Configuración de Carpeta"
+      },
+      on: {
+        click: function click($event) {
+          return _vm.muestaVentanaInfo(key, folder, pos);
+        }
+      }
+    }, [_c("v-icon", [_vm._v("mdi-cog")])], 1) : _vm._e()], 1), _vm._v(" "), _vm.statusfolders[folder] ? _c("v-row", _vm._l(_vm.filteredList(key), function (item, index) {
       return item.status === _vm.filtroStatus ? _c("v-col", {
         key: index + "sec",
         staticClass: "drag-el",
@@ -12852,7 +13139,7 @@ var render = function render() {
             });
           }
         }
-      }, [_c("v-card", [_c("v-card-text", [_vm._v("\n                                " + _vm._s(item.nombre) + "\n                                "), item.status === 1 ? _c("v-chip", {
+      }, [_c("v-card", [_c("v-card-text", [_vm._v("\n                                    " + _vm._s(item.nombre) + "\n                                    "), item.status === 1 ? _c("v-chip", {
         staticClass: "greenD white--text"
       }, [_vm._v("Activo")]) : _vm._e(), _vm._v(" "), item.status === 6 ? _c("v-chip", {
         staticClass: "Grey white--text"
@@ -12878,7 +13165,22 @@ var render = function render() {
             return _vm.openProyecto(item);
           }
         }
-      }, [_vm._v("Abrir")])], 1)], 1)], 1) : _vm._e();
+      }, [_vm._v("Abrir")]), _vm._v(" "), _c("v-chip", {
+        staticClass: "orange black--text"
+      }, [_vm._v("Tareas: " + _vm._s(item.ttareas) + "  ")]), _vm._v(" "), _c("v-chip", {
+        staticClass: "red white--text"
+      }, [_vm._v("Proceso: " + _vm._s(item.Tfinalizado) + " ")]), _vm._v(" "), _c("v-chip", {
+        staticClass: "success"
+      }, [_vm._v("Finalizado: " + _vm._s(item.Tproceso) + " ")]), _vm._v(" "), _c("v-btn", {
+        attrs: {
+          title: "Actualiza datos proyecto"
+        },
+        on: {
+          click: function click($event) {
+            return _vm.actualizatareasproyecto(item);
+          }
+        }
+      }, [_c("v-icon", [_vm._v("mdi-reload")])], 1)], 1)], 1)], 1) : _vm._e();
     }), 1) : _vm._e()], 1) : _vm._e();
   }), 1)], 1), _vm._v(" "), _c("v-dialog", {
     model: {
@@ -12888,49 +13190,43 @@ var render = function render() {
       },
       expression: "IntoFolder"
     }
-  }, [_c("v-card", [_c("v-card-title", [_vm._v("\n                " + _vm._s(_vm.fname === "sf" ? "Externo" : _vm.fname) + " "), _c("v-spacer"), _vm._v(" "), _c("v-btn", {
+  }, [_c("v-card", [_c("v-card-title", {
+    staticClass: "greenD white--text"
+  }, [_vm._v("\n                    Configuración de carpeta\n               "), _c("v-spacer"), _vm._v(" "), _c("v-btn", {
     on: {
       click: function click($event) {
         _vm.IntoFolder = false;
       }
     }
-  }, [_c("v-icon", [_vm._v("mdi-close")])], 1)], 1), _vm._v(" "), _c("v-card-text", [_c("v-row", _vm._l(_vm.muestraIntoFolder, function (item, index) {
-    return _c("v-col", {
-      key: index + "sec",
-      staticClass: "drag-el",
-      staticStyle: {
-        padding: "2%"
+  }, [_c("v-icon", [_vm._v("mdi-close")])], 1)], 1), _vm._v(" "), _c("v-card-text", [_c("br"), _vm._v(" "), _c("br"), _vm._v(" "), _c("br"), _vm._v(" "), _c("v-text-field", {
+    attrs: {
+      label: "Nombre de carpeta",
+      outlined: ""
+    },
+    model: {
+      value: _vm.Nname,
+      callback: function callback($$v) {
+        _vm.Nname = $$v;
       },
-      attrs: {
-        cols: "12",
-        md: "12",
-        draggable: "true"
-      },
-      on: {
-        dragstart: function dragstart($event) {
-          return _vm.starDrag($event, {
-            item: item,
-            folder: _vm.folder
-          });
-        }
+      expression: "Nname"
+    }
+  }), _vm._v(" "), _c("v-btn", {
+    staticClass: "greenD white--text",
+    on: {
+      click: function click($event) {
+        return _vm.cambiarNombre();
       }
-    }, [_c("v-card", [_c("v-card-text", [_vm._v("\n                                " + _vm._s(item.nombre) + "\n\n                                "), item.status === 1 ? _c("v-chip", {
-      staticClass: "greenD white--text"
-    }, [_vm._v("Activo")]) : _vm._e(), _vm._v(" "), item.status === 0 ? _c("v-chip", {
-      staticClass: "Grey white--text"
-    }, [_vm._v("Inactivo")]) : _vm._e(), _vm._v(" "), item.status === 2 ? _c("v-chip", {
-      staticClass: "Grey white--text"
-    }, [_vm._v("Concluido")]) : _vm._e(), _vm._v(" "), _c("v-spacer"), _vm._v(" "), _c("v-btn", {
-      attrs: {
-        title: "Editar Proyecto"
-      },
-      on: {
-        click: function click($event) {
-          return _vm.editarPro(item);
-        }
+    }
+  }, [_vm._v("Guardar Cambio")]), _vm._v(" "), _vm.muestraIntoFolder.length === 0 ? _c("v-btn", {
+    staticClass: "red white--text",
+    on: {
+      click: function click($event) {
+        return _vm.eliminafolder();
       }
-    }, [_vm._v("Editar")])], 1)], 1)], 1);
-  }), 1)], 1)], 1)], 1)], 1);
+    }
+  }, [_vm._v("\n                        Eliminar Carpeta\n                    ")]) : _vm._e(), _vm._v(" "), _vm.muestraIntoFolder.length > 0 ? _c("v-btn", {
+    staticClass: "grey white--text"
+  }, [_vm._v("\n                        No puede eliminar la carpeta\n                    ")]) : _vm._e()], 1)], 1)], 1)], 1);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -12957,7 +13253,38 @@ var render = function render() {
     attrs: {
       loaderlista: ""
     }
-  }) : _vm._e(), _vm._v(" "), !_vm.loaderlista ? _c("v-card", [_vm._l(_vm.folder, function (fol, index) {
+  }) : _vm._e(), _vm._v(" "), _c("v-dialog", {
+    model: {
+      value: _vm.editfol,
+      callback: function callback($$v) {
+        _vm.editfol = $$v;
+      },
+      expression: "editfol"
+    }
+  }, [_c("v-card", [_c("v-card-title", {
+    staticClass: "greenD white--text"
+  }, [_c("h2", [_vm._v("Editar folder")]), _vm._v(" "), _c("v-btn", {
+    staticClass: "white greenD--text"
+  }, [_c("v-icon", [_vm._v("mdi-close")])], 1)], 1), _vm._v(" "), _c("v-card-text", [_vm._v("\n                    Nombre de Foleder:\n                    "), _c("v-text-field", {
+    attrs: {
+      label: "Nombre de Folder",
+      required: ""
+    },
+    model: {
+      value: _vm.folderselect.nombre,
+      callback: function callback($$v) {
+        _vm.$set(_vm.folderselect, "nombre", $$v);
+      },
+      expression: "folderselect.nombre"
+    }
+  }), _vm._v(" "), _c("v-btn", {
+    staticClass: "greenD white--text",
+    on: {
+      click: function click($event) {
+        return _vm.cambianombredecarpeta();
+      }
+    }
+  }, [_vm._v(" Guardar Cambios")])], 1)], 1)], 1), _vm._v(" "), !_vm.loaderlista ? _c("v-card", [_vm._l(_vm.folder, function (fol, index) {
     return _c("div", {
       key: "folder" + index
     }, [_c("div", {
@@ -12975,7 +13302,24 @@ var render = function render() {
           $event.preventDefault();
         }
       }
-    }, [_vm._v("\n                    -"), _c("v-icon", [_vm._v("mdi-folder")]), _vm._v(_vm._s(fol.nombre) + "\n                ")], 1), _vm._v(" "), _c("div", {
+    }, [_vm._v("\n                        -"), _c("v-icon", [_vm._v("mdi-folder")]), _vm._v(_vm._s(fol.nombre) + "\n                          "), _c("v-btn", {
+      on: {
+        click: function click($event) {
+          return _vm.editfolder(fol);
+        }
+      }
+    }, [_c("v-icon", {
+      staticStyle: {
+        color: "green"
+      }
+    }, [_vm._v("mdi-cog")])], 1), _vm._v(" "), _vm.listado[fol.nombre].length === 0 ? _c("v-btn", {
+      staticClass: "red white--text",
+      on: {
+        click: function click($event) {
+          return _vm.EliminarCarpetaVacia(fol);
+        }
+      }
+    }, [_c("v-icon", [_vm._v("mdi-delete")])], 1) : _vm._e()], 1), _vm._v(" "), !_vm.vistaArchivos ? _c("div", {
       staticClass: "drop-zone",
       on: {
         drop: function drop($event) {
@@ -12989,7 +13333,7 @@ var render = function render() {
         }
       }
     }, _vm._l(_vm.listado[fol.nombre], function (item, index) {
-      return _c("div", {
+      return !_vm.vistaArchivos ? _c("div", {
         key: item.id,
         staticClass: "drag-el",
         attrs: {
@@ -13000,7 +13344,7 @@ var render = function render() {
             return _vm.starDrag($event, item);
           }
         }
-      }, [_c("v-icon", [_vm._v(_vm._s(item.tipoarchivo === "Enlace" ? "mdi-link" : "mdi-file"))]), _vm._v(" " + _vm._s(item.id) + " " + _vm._s(item.nombre) + "\n\n                        "), _vm.validapermiso({
+      }, [_c("v-icon", [_vm._v(_vm._s(item.tipoarchivo === "Enlace" ? "mdi-link" : "mdi-file"))]), _vm._v(" " + _vm._s(item.id) + " " + _vm._s(item.nombre) + "\n                            "), _vm.validapermiso({
         val: item,
         tp: "ver"
       }) === true ? _c("v-btn", {
@@ -13048,9 +13392,121 @@ var render = function render() {
         }
       }, [_c("v-icon", {
         staticClass: "white--text"
-      }, [_vm._v("mdi-lock")])], 1) : _vm._e()], 1);
-    }), 0)])]);
-  }), _vm._v(" "), _c("div", {
+      }, [_vm._v("mdi-lock")])], 1) : _vm._e()], 1) : _vm._e();
+    }), 0) : _vm._e(), _vm._v(" "), _vm.vistaArchivos ? _c("v-row", {
+      staticClass: "drop-zone",
+      on: {
+        drop: function drop($event) {
+          return _vm.endrop($event, fol.nombre);
+        },
+        dragenter: function dragenter($event) {
+          $event.preventDefault();
+        },
+        dragover: function dragover($event) {
+          $event.preventDefault();
+        }
+      }
+    }, _vm._l(_vm.listado[fol.nombre], function (item, index) {
+      return _c("v-col", {
+        key: item.id,
+        staticClass: "drag-el",
+        attrs: {
+          draggable: "true",
+          cols: "4"
+        },
+        on: {
+          dragstart: function dragstart($event) {
+            return _vm.starDrag($event, item);
+          }
+        }
+      }, [_c("v-card", [_c("v-card-text", [item.tipoarchivo === "Enlace" ? _c("v-img", {
+        staticStyle: {
+          width: "100%"
+        },
+        attrs: {
+          src: _vm.url + "/public/images/icons/link.jpg"
+        }
+      }) : _vm._e(), _vm._v(" "), item.extension === "jpg" ? _c("v-img", {
+        attrs: {
+          src: _vm.url + "api/img/" + _vm.encode64(item.urlArchivo)
+        }
+      }) : _vm._e(), _vm._v(" "), item.extension === "jpeg" ? _c("v-img", {
+        attrs: {
+          src: _vm.url + "api/img/" + _vm.encode64(item.urlArchivo)
+        }
+      }) : _vm._e(), _vm._v(" "), item.extension === "png" ? _c("v-img", {
+        attrs: {
+          src: _vm.url + "api/img/" + _vm.encode64(item.urlArchivo)
+        }
+      }) : _vm._e(), _vm._v(" "), item.extension === "gif" ? _c("v-img", {
+        attrs: {
+          src: _vm.url + "api/img/" + _vm.encode64(item.urlArchivo)
+        }
+      }) : _vm._e(), _vm._v(" "), item.extension === "pdf" ? _c("v-img", {
+        staticStyle: {
+          width: "100%"
+        },
+        attrs: {
+          src: _vm.url + "/public/images/icons/pdf.jpg"
+        }
+      }) : _vm._e(), _vm._v(" "), item.extension === "doc" ? _c("v-img", {
+        staticStyle: {
+          width: "100%"
+        },
+        attrs: {
+          src: _vm.url + "/public/images/icons/doc.png"
+        }
+      }) : _vm._e(), _vm._v(" "), _vm.validapermiso({
+        val: item,
+        tp: "ver"
+      }) === true ? _c("v-btn", {
+        staticClass: "greenD",
+        attrs: {
+          elevation: "2",
+          icon: "",
+          raised: "",
+          title: "Ver Archivo"
+        },
+        on: {
+          click: function click($event) {
+            return _vm.openvisor(item);
+          }
+        }
+      }, [_c("v-icon", {
+        staticClass: "white--text"
+      }, [_vm._v("mdi-eye")])], 1) : _vm._e(), _vm._v(" "), _vm.proyectoSelect.adminproy === true ? _c("v-btn", {
+        staticClass: "red",
+        attrs: {
+          elevation: "2",
+          icon: "",
+          raised: "",
+          title: "Eliminar Archivo"
+        },
+        on: {
+          click: function click($event) {
+            return _vm.EliminarArchivo(item);
+          }
+        }
+      }, [_c("v-icon", {
+        staticClass: "white--text"
+      }, [_vm._v("mdi-delete")])], 1) : _vm._e(), _vm._v(" "), _vm.proyectoSelect.adminproy === true ? _c("v-btn", {
+        staticClass: "greenD",
+        attrs: {
+          elevation: "2",
+          icon: "",
+          raised: "",
+          title: "Cambiar Permisos"
+        },
+        on: {
+          click: function click($event) {
+            return _vm.Cambiarpermisos(item);
+          }
+        }
+      }, [_c("v-icon", {
+        staticClass: "white--text"
+      }, [_vm._v("mdi-lock")])], 1) : _vm._e()], 1)], 1)], 1);
+    }), 1) : _vm._e()], 1)]);
+  }), _vm._v(" "), !_vm.vistaArchivos ? _c("div", {
     staticClass: "drop-zone",
     on: {
       drop: function drop($event) {
@@ -13088,7 +13544,7 @@ var render = function render() {
           return _vm.starDrag($event, item);
         }
       }
-    }, [_c("v-icon", [_vm._v(_vm._s(item.tipoarchivo === "Enlace" ? "mdi-link" : "mdi-file"))]), _vm._v("   " + _vm._s(item.id) + " " + _vm._s(item.nombre) + "  \n                \n            \n                "), _vm.validapermiso({
+    }, [_c("v-icon", [_vm._v(_vm._s(item.tipoarchivo === "Enlace" ? "mdi-link" : "mdi-file"))]), _vm._v("   " + _vm._s(item.id) + " " + _vm._s(item.nombre) + " \n                    "), _vm.validapermiso({
       val: item,
       tp: "ver"
     }) ? _c("v-btn", {
@@ -13137,7 +13593,152 @@ var render = function render() {
     }, [_c("v-icon", {
       staticClass: "white--text"
     }, [_vm._v("mdi-lock")])], 1) : _vm._e()], 1);
-  })], 2)], 2) : _vm._e()], 1);
+  })], 2) : _vm._e(), _vm._v(" "), _vm.vistaArchivos ? _c("v-row", {
+    staticClass: "drop-zone",
+    on: {
+      drop: function drop($event) {
+        return _vm.endrop($event, "sinfolder");
+      },
+      dragenter: function dragenter($event) {
+        $event.preventDefault();
+      },
+      dragover: function dragover($event) {
+        $event.preventDefault();
+      }
+    }
+  }, [_c("div", {
+    staticClass: "drop-folder",
+    on: {
+      drop: function drop($event) {
+        return _vm.endrop($event, "sinfolder");
+      },
+      dragenter: function dragenter($event) {
+        $event.preventDefault();
+      },
+      dragover: function dragover($event) {
+        $event.preventDefault();
+      }
+    }
+  }, [_vm._v("..")]), _vm._v(" "), _vm._l(_vm.listado["sinfolder"], function (item, index) {
+    return _c("v-col", {
+      key: item.id,
+      staticClass: "drag-el",
+      attrs: {
+        draggable: "true",
+        cols: "4"
+      },
+      on: {
+        dragstart: function dragstart($event) {
+          return _vm.starDrag($event, item);
+        }
+      }
+    }, [_c("v-card", [_c("v-card-text", [item.tipoarchivo === "Enlace" ? _c("v-img", {
+      staticStyle: {
+        width: "100%"
+      },
+      attrs: {
+        src: _vm.url + "/public/images/icons/link.jpg"
+      }
+    }) : _vm._e(), _vm._v(" "), item.extension === "jpg" ? _c("v-img", {
+      attrs: {
+        src: _vm.url + "api/img/" + _vm.encode64(item.urlArchivo)
+      }
+    }) : _vm._e(), _vm._v(" "), item.extension === "jpeg" ? _c("v-img", {
+      attrs: {
+        src: _vm.url + "api/img/" + _vm.encode64(item.urlArchivo)
+      }
+    }) : _vm._e(), _vm._v(" "), item.extension === "png" ? _c("v-img", {
+      attrs: {
+        src: _vm.url + "api/img/" + _vm.encode64(item.urlArchivo)
+      }
+    }) : _vm._e(), _vm._v(" "), item.extension === "gif" ? _c("v-img", {
+      attrs: {
+        src: _vm.url + "api/img/" + _vm.encode64(item.urlArchivo)
+      }
+    }) : _vm._e(), _vm._v(" "), item.extension === "pdf" ? _c("v-img", {
+      staticStyle: {
+        width: "100%"
+      },
+      attrs: {
+        src: _vm.url + "/public/images/icons/pdf.jpg"
+      }
+    }) : _vm._e(), _vm._v(" "), item.extension === "doc" ? _c("v-img", {
+      staticStyle: {
+        width: "100%"
+      },
+      attrs: {
+        src: _vm.url + "/public/images/icons/doc.png"
+      }
+    }) : _vm._e(), _vm._v(" "), item.extension === "docx" ? _c("v-img", {
+      staticStyle: {
+        width: "100%"
+      },
+      attrs: {
+        src: _vm.url + "/public/images/icons/doc.png"
+      }
+    }) : _vm._e(), _vm._v(" "), item.extension === "xls" ? _c("v-img", {
+      staticStyle: {
+        width: "100%"
+      },
+      attrs: {
+        src: _vm.url + "/public/images/icons/xls.png"
+      }
+    }) : _vm._e(), _vm._v(" "), item.extension === "xlsx" ? _c("v-img", {
+      staticStyle: {
+        width: "100%"
+      },
+      attrs: {
+        src: _vm.url + "/public/images/icons/xls.png"
+      }
+    }) : _vm._e(), _vm._v(" "), _vm.validapermiso({
+      val: item,
+      tp: "ver"
+    }) ? _c("v-btn", {
+      staticClass: "greenD",
+      attrs: {
+        icon: "",
+        raised: "",
+        title: "Ver Archivo"
+      },
+      on: {
+        click: function click($event) {
+          return _vm.openvisor(item);
+        }
+      }
+    }, [_c("v-icon", {
+      staticClass: "white--text"
+    }, [_vm._v("mdi-eye")])], 1) : _vm._e(), _vm._v(" "), _vm.proyectoSelect.adminproy === true ? _c("v-btn", {
+      staticClass: "red",
+      attrs: {
+        elevation: "0",
+        icon: "",
+        raised: "",
+        title: "Eliminar Archivo"
+      },
+      on: {
+        click: function click($event) {
+          return _vm.EliminarArchivo(item);
+        }
+      }
+    }, [_c("v-icon", {
+      staticClass: "white--text"
+    }, [_vm._v("mdi-delete")])], 1) : _vm._e(), _vm._v(" "), _vm.proyectoSelect.adminproy === true ? _c("v-btn", {
+      staticClass: "greenD",
+      attrs: {
+        elevation: "0",
+        icon: "",
+        raised: "",
+        title: "Cambiar Permisos"
+      },
+      on: {
+        click: function click($event) {
+          return _vm.Cambiarpermisos(item);
+        }
+      }
+    }, [_c("v-icon", {
+      staticClass: "white--text"
+    }, [_vm._v("mdi-lock")])], 1) : _vm._e()], 1)], 1)], 1);
+  })], 2) : _vm._e()], 2) : _vm._e()], 1);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -13354,14 +13955,43 @@ var moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js"
   },
   actions: {
     /**
+     * carga el proyecto por el ID a la API/cargaProyectoId ejecuta commit('cargaNotificaciones', res).
+     * @action cargaNotifi=data
+     * @param {Array} data recive payload con email.
+     * @returns {void}
+     */
+    loadProyectoId: function loadProyectoId(_ref, data) {
+      var dispatch = _ref.dispatch,
+        commit = _ref.commit,
+        state = _ref.state;
+      var payload = {
+        id: data
+      };
+      fetch(state.url + "loadproyectoid", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+          "X-CSRF-TOKEN": state.csrf
+        },
+        body: JSON.stringify(payload)
+      }).then(function (res) {
+        return res.json();
+      })["catch"](function (error) {
+        return console.error("Error", error);
+      }).then(function (resp) {
+        // commit('cargaProyectos', resp);
+        dispatch('LoadProyecto', resp);
+      });
+    },
+    /**
      * cargaNotifi carga las notificaciones llamando a la API/carganotificaciones ejecuta commit('cargaNotificaciones', res).
      * @action cargaNotifi=data
      * @param {Array} data recive payload con email.
      * @returns {void}
      */
-    cargaNotifi: function cargaNotifi(_ref, data) {
-      var state = _ref.state,
-        commit = _ref.commit;
+    cargaNotifi: function cargaNotifi(_ref2, data) {
+      var state = _ref2.state,
+        commit = _ref2.commit;
       /// notificaciones al usuario
       //  console.log(data)
       var payload = {
@@ -13386,9 +14016,9 @@ var moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js"
      * @param {Array} datosnot recive payload con datos para notificaciones.
      * @returns {void}
      */
-    enviaNotificacion: function enviaNotificacion(_ref2, datosnot) {
-      var state = _ref2.state,
-        commit = _ref2.commit;
+    enviaNotificacion: function enviaNotificacion(_ref3, datosnot) {
+      var state = _ref3.state,
+        commit = _ref3.commit;
       datosnot.name_rem = state.sesion.name;
       datosnot.id_rem = state.sesion.id;
       datosnot.socket_rem = state.socketid;
@@ -13413,10 +14043,10 @@ var moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js"
     * @action cargaUserDataSesion
     * @return {void}
     */
-    cargaUserDataSesion: function cargaUserDataSesion(_ref3) {
-      var commit = _ref3.commit,
-        state = _ref3.state,
-        dispatch = _ref3.dispatch;
+    cargaUserDataSesion: function cargaUserDataSesion(_ref4) {
+      var commit = _ref4.commit,
+        state = _ref4.state,
+        dispatch = _ref4.dispatch;
       fetch(state.url + 'configsesion', {
         method: 'POST',
         headers: {
@@ -13440,15 +14070,37 @@ var moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js"
         }
       });
     },
+    actulizaconfiguser: function actulizaconfiguser(_ref5, data) {
+      var commit = _ref5.commit,
+        state = _ref5.state,
+        dispatch = _ref5.dispatch;
+      var payload = {
+        id: state.sesion.id,
+        configsesion: data
+      };
+      fetch(state.url + 'updateconfigsesion', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': state.csrf
+        },
+        body: JSON.stringify(payload)
+      }).then(function (res) {
+        return res.json();
+      }).then(function (res) {
+        //console.log(payload)
+        //console.log(res)
+      });
+    },
     /**
     * Actualiza datos de sesionde usuario 
     *@action actualizaDatosDeSesion
     * @return {void}
     */
-    actualizaDatosDeSesion: function actualizaDatosDeSesion(_ref4, data) {
-      var commit = _ref4.commit,
-        state = _ref4.state,
-        dispatch = _ref4.dispatch;
+    actualizaDatosDeSesion: function actualizaDatosDeSesion(_ref6, data) {
+      var commit = _ref6.commit,
+        state = _ref6.state,
+        dispatch = _ref6.dispatch;
       var payload = {
         id: state.sesion.id,
         configsesion: {
@@ -13474,9 +14126,9 @@ var moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js"
      * @action loadUserproy
      * @returns {void}
      */
-    loadUserproy: function loadUserproy(_ref5) {
-      var commit = _ref5.commit,
-        state = _ref5.state;
+    loadUserproy: function loadUserproy(_ref7) {
+      var commit = _ref7.commit,
+        state = _ref7.state;
       var colaboradores = [];
       var creadores = [];
       if (state.proyectoSelect.id_collaborate) {
@@ -13495,9 +14147,9 @@ var moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js"
      * @patams {Object} datos - recive datos de objecto con el id de usuario
      * @returns {void}
      */
-    cargaUsuarios: function cargaUsuarios(_ref6, datos) {
-      var commit = _ref6.commit,
-        state = _ref6.state;
+    cargaUsuarios: function cargaUsuarios(_ref8, datos) {
+      var commit = _ref8.commit,
+        state = _ref8.state;
       var payload = {
         acces: "data",
         id_user: datos.id
@@ -13521,9 +14173,9 @@ var moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js"
      * @param {Object} datos - recive payload con indormación del usuario para responder con la info de los proyectos asignados o creados
      * @returns {void}
      */
-    cargaProyectos: function cargaProyectos(_ref7, datos) {
-      var commit = _ref7.commit,
-        state = _ref7.state;
+    cargaProyectos: function cargaProyectos(_ref9, datos) {
+      var commit = _ref9.commit,
+        state = _ref9.state;
       fetch(state.url + "cargaproyectos", {
         method: "POST",
         headers: {
@@ -13545,10 +14197,10 @@ var moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js"
     * @param {Object} ev - recive la información de payload con el proyecto seleccionado y realiza la propagacion de datos para los demas componentes Mutaciones: [cargaProyectoSelect, cambiaLoader, cargaListaUsuarios]  -- Actions: [ loadUserproy ]
     * @returns {void}
     */
-    LoadProyecto: function LoadProyecto(_ref8, ev) {
-      var dispatch = _ref8.dispatch,
-        commit = _ref8.commit,
-        state = _ref8.state;
+    LoadProyecto: function LoadProyecto(_ref10, ev) {
+      var dispatch = _ref10.dispatch,
+        commit = _ref10.commit,
+        state = _ref10.state;
       // console.log('id proyecto a cargar '+ev.id)
       commit('cambiaLoader', true);
       if (ev) {
@@ -13603,10 +14255,10 @@ var moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js"
     * @action loadTareas=datos
     * @returns {void}
     */
-    loadTareas: function loadTareas(_ref9) {
-      var commit = _ref9.commit,
-        dispatch = _ref9.dispatch,
-        state = _ref9.state;
+    loadTareas: function loadTareas(_ref11) {
+      var commit = _ref11.commit,
+        dispatch = _ref11.dispatch,
+        state = _ref11.state;
       commit('cargaTareas', []);
       var payload = {
         id_proyecto: state.proyectoSelect.id
@@ -13629,9 +14281,9 @@ var moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js"
     * @action loadArchivos
     * @returns {void}
     */
-    loadArchivos: function loadArchivos(_ref10) {
-      var commit = _ref10.commit,
-        state = _ref10.state;
+    loadArchivos: function loadArchivos(_ref12) {
+      var commit = _ref12.commit,
+        state = _ref12.state;
       var archivos = {
         id_proyecto: state.proyectoSelect.id
       };
@@ -13649,8 +14301,8 @@ var moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js"
         commit('cargaArchivos', ret);
       });
     },
-    cambiaStatuSnackBar: function cambiaStatuSnackBar(_ref11, data) {
-      var commit = _ref11.commit;
+    cambiaStatuSnackBar: function cambiaStatuSnackBar(_ref13, data) {
+      var commit = _ref13.commit;
       //  console.log('carga datos de snakbar')
       data.snackbar === false ? data.snackbar = true : data.snackbar = false;
       commit('cambiaSnackbar', data);
@@ -21253,7 +21905,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.drop-folder {\r\n    background-color: green;\r\n    width: 100%;\r\n    color: white;\n}\n.drag-el {\r\n    color: #000;\r\n    padding: 5px;\r\n    margin-bottom: 10px;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.drop-folder {\r\n    background-color: green;\r\n    width: 100%;\r\n    color: white;\n}\n.drag-el {\r\n    color: #000;\r\n    padding: 5px;\r\n    margin-bottom: 10px;\n}\n.drop-area {\r\n  border: 2px dashed #ccc;\r\n  padding: 20px;\r\n  text-align: center;\r\n  cursor: pointer;\n}\n.drop-area.dragover {\r\n  border-color: #2196F3;\r\n  background-color: #f0f0f0;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

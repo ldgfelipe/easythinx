@@ -1,20 +1,33 @@
 <template>
     <div>
-        <v-btn class="greenD white--text" @click="creacarpeta = true"
-            title="Agregar Folder"><v-icon>mdi-plus</v-icon><v-icon>mdi-folder</v-icon></v-btn>
-        <v-btn class="greenD white--text" @click="inifolderproyect()" title="Actualizar Listado">
-            <v-icon>mdi-reload</v-icon></v-btn>
-        <v-btn @click="filtroStatus = 1" :class="filtroStatus === 1 ? 'green white--text' : 'black--text'">Activos</v-btn>
-        <v-btn @click="filtroStatus = 0" :class="filtroStatus === 0 ? 'green white--text' : 'black--text'">Inactivo</v-btn>
-        <v-btn @click="filtroStatus = 6"
-            :class="filtroStatus === 6 ? 'green white--text' : 'black--text'">Archivados</v-btn>
-        <v-btn @click="filtroStatus = 2" :class="filtroStatus === 2 ? 'green white--text' : 'black--text'">Concluido</v-btn>
 
+        <v-btn class="greenD white--text" @click="creacarpeta = true" title="Agregar Folder"><v-icon>mdi-plus</v-icon><v-icon>mdi-folder</v-icon>
+        </v-btn>
+
+        <v-btn class="greenD white--text" @click="inifolderproyect()" title="Actualizar Listado">
+            <v-icon>mdi-reload</v-icon>
+        </v-btn>
+
+        <v-btn @click="filtroStatus = 1" :class="filtroStatus === 1 ? 'green white--text' : 'black--text'">
+            Activos
+        </v-btn>
+
+        <v-btn @click="filtroStatus = 0" :class="filtroStatus === 0 ? 'green white--text' : 'black--text'">
+            Inactivo
+        </v-btn>
+
+        <v-btn @click="filtroStatus = 6" :class="filtroStatus === 6 ? 'green white--text' : 'black--text'">
+            Archivados
+        </v-btn>
+
+        <v-btn @click="filtroStatus = 2" :class="filtroStatus === 2 ? 'green white--text' : 'black--text'">
+            Concluido
+        </v-btn>
 
        <!----- <v-text-field v-model="search" label="Ingrese el nombre del proyecto que desea buscar"></v-text-field>----->
 
-
         <v-progress-circular v-if="loaderlista" indeterminate></v-progress-circular>
+
         <v-dialog max-width="600" v-model="creacarpeta">
             <v-card>
                 <v-card-title class="greenD white--text">
@@ -27,21 +40,41 @@
                 </v-card-text>
             </v-card>
         </v-dialog>
+
         <div class="container">
+            
             <v-row>
-                <v-col cols="12" md="12" class="carpetastyle" v-if="!loaderlista" v-for="(key, folder) in listafolders"
+                <v-col cols="12" md="12" class="carpetastyle" v-if="!loaderlista" v-for="(key, folder,pos) in listafolders"
                     :key="folder + '-seccion'" @drop="endrop($event, folder)" @dragenter.prevent @dragover.prevent>
-                    <div class="greenD white--text" style="cursor:pointer;"> <v-btn
-                            @click="cambiaStatusCarpeta(folder)"><v-icon class=" greenD--text">{{ statusfolders[folder] ?
-                                'mdi-minus-box' : 'mdi-file-tree-outline'}}</v-icon> </v-btn> {{ folder === 'sf' ? '' :
-                        folder }} ({{ Object.keys(key).length }})
-                        <!---------<v-btn @click="muestaVentanaInfo(key,folder)" ><v-icon class=" greenD--text">mdi-fit-to-screen-outline</v-icon></v-btn>--->
+                    <div class="greenD white--text" style="cursor:pointer;">
+                        
+                        <v-btn @click="cambiaStatusCarpeta(folder)">
+
+                            <v-icon class=" greenD--text">
+                                {{ statusfolders[folder] ? 'mdi-minus-box' : 'mdi-file-tree-outline'}}
+                            </v-icon>
+
+                        </v-btn> 
+                                
+                        <v-btn>
+                            {{ folder === 'sf' ? '' : folder }} 
+                        </v-btn>    
+
+                        ({{ Object.keys(key).length }})  
+                     
+                        <v-btn v-if="folder !== 'sf'"  @click="muestaVentanaInfo(key,folder,pos)" class="white greenD--text" title="Configuración de Carpeta">
+                            <v-icon>mdi-cog</v-icon>
+                        </v-btn>
+            
                     </div>
                     <v-row v-if="statusfolders[folder]">
+                      
                         <v-col cols="12" md="12" v-for="(item, index) in filteredList(key)" :key="index + 'sec'"
                             @dragstart="starDrag($event, { item: item, folder: folder })" v-if="item.status === filtroStatus"
                             class="drag-el" draggable="true" style="padding:2%;">
+
                             <v-card>
+                                
                                 <v-card-text>
                                     {{ item.nombre }}
                                     <v-chip v-if="item.status === 1" class="greenD white--text">Activo</v-chip>
@@ -49,30 +82,51 @@
                                     <v-chip v-if="item.status === 0" class="Grey white--text">Inactivo</v-chip>
                                     <v-chip v-if="item.status === 2" class="Grey white--text">Concluido</v-chip>
                                     <v-btn @click="editarPro(item)" v-if="sesion.tipo_usuario >= 1"
-                                        title="Editar Proyecto">Editar</v-btn>
+                                        title="Editar Proyecto">Editar</v-btn> 
                                     <v-btn @click="openProyecto(item)" title="Abrir Proyecto">Abrir</v-btn>
-                                </v-card-text></v-card>
+<v-chip class="orange black--text">Tareas: {{ item.ttareas }}  </v-chip> <v-chip class="red white--text" >Proceso: {{ item.Tfinalizado }} </v-chip> <v-chip class="success">Finalizado: {{ item.Tproceso }} </v-chip>  <v-btn @click="actualizatareasproyecto(item)" title="Actualiza datos proyecto"><v-icon>mdi-reload</v-icon></v-btn>
+                                </v-card-text>
+
+                            </v-card>
+                        
                         </v-col>
+
                     </v-row>
                 </v-col>
             </v-row>
         </div>
 
-
         <v-dialog v-model="IntoFolder">
             <v-card>
-                <v-card-title>
-                    {{ fname === 'sf' ? 'Externo' : fname }} <v-spacer></v-spacer> <v-btn
+                <v-card-title class="greenD white--text">
+                    Configuración de carpeta
+               <v-spacer></v-spacer> <v-btn
                         @click="IntoFolder = false"><v-icon>mdi-close</v-icon></v-btn>
                 </v-card-title>
                 <v-card-text>
-                    <v-row>
+                    <br />
+                    <br />
+                    <br />
+                   <v-text-field v-model="Nname" label="Nombre de carpeta" outlined ></v-text-field>         
+                   <v-btn class="greenD white--text" @click="cambiarNombre()">Guardar Cambio</v-btn>
+                    <v-btn v-if="muestraIntoFolder.length===0" @click="eliminafolder()" class="red white--text"  >
+                        Eliminar Carpeta
+                    </v-btn>
+
+                    <v-btn v-if="muestraIntoFolder.length>0" class="grey white--text"  >
+                        No puede eliminar la carpeta
+                    </v-btn>
+                           
+        
+
+                  <!----- <v-row>
                         <v-col cols="12" md="12" v-for="(item, index) in muestraIntoFolder" :key="index + 'sec'"
                             @dragstart="starDrag($event, { item: item, folder: folder })" class="drag-el" draggable="true"
                             style="padding:2%;">
                             <v-card>
 
                                 <v-card-text>
+
                                     {{ item.nombre }}
 
                                     <v-chip v-if="item.status === 1" class="greenD white--text">Activo</v-chip>
@@ -83,11 +137,13 @@
                                     <v-btn @click="editarPro(item)" title="Editar Proyecto">Editar</v-btn>
                                 </v-card-text></v-card>
                         </v-col>
-                    </v-row>
+                    </v-row>--->
+               
                 </v-card-text>
-            </v-card>
-        </v-dialog>
 
+            </v-card>
+
+        </v-dialog>
 
     </div>
 </template>
@@ -107,7 +163,12 @@ export default {
             IntoFolder: false,
             fname: "",
             search: "",
-            filtroStatus: 1
+            filtroStatus: 1,
+            Nname:"",
+            gTotaltareas:{},
+            gTotalproceso:{},
+            gTotalfinalizados:{}
+    
         }
     },
     computed: {
@@ -122,10 +183,78 @@ export default {
     },
     created() {
         this.inifolderproyect()
+         this.$nextTick(()=>{this.actualizatodalistaTareaProyectos()},1000)
     },
     methods: {
         /// actualiza los datos de la base configuser
         ...mapActions(["actualizaDatosDeSesion", "cargaProyectos", "LoadProyecto"]),
+        
+        actualizatareasproyecto(p){
+         var payload={
+            id_proyecto:p.id
+         }
+             fetch(this.url + "actualizatareasproyecto", {
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json",
+                    "X-CSRF-TOKEN": this.csrf,
+                },
+                body: JSON.stringify(payload),
+            })
+                .then((res) => res.json())
+                .catch((error) => console.error("Error", error))
+                .then((resp) => {
+                    console.log(resp)
+                    p.ttareas=resp.length
+                      p.Tproceso=0
+                       p.Tfinalizado=0
+                    /// cuenta tareas 
+                   for(var t=0; t<resp.length; t++){
+                    if(resp[t].status===0){
+                        console.log('contando 0')
+                         p.Tproceso = p.Tproceso+1
+                    }
+                      if(resp[t].status===1){
+                        console.log('contando 1')
+                           p.Tfinalizado=p.Tfinalizado+1
+                    }
+                   }
+                      this.actualizatodo()
+                });
+        },
+        actualizatodalistaTareaProyectos(){
+              this.gTotaltareas=0
+            this.gTotalpendientes=0
+            this.gTotalfinalizados=0
+               Object.keys(this.listafolders).forEach((i)=>{
+                this.listafolders[i].map((e)=>{
+                     this.$nextTick(()=>{this.actualizatareasproyecto(e)})
+                })
+      
+             })
+          
+        },
+        eliminafolder(){
+            if(confirm('¿Seguro que deseas eliminar la carpeta?')){
+                delete this.listafolders[this.fname] 
+            }
+
+                 this.actualizatodo()
+
+              this.IntoFolder = false
+        },
+        cambiarNombre(){
+            if(this.Nname!==this.fname){
+                 this.$set(this.listafolders,[this.Nname],this.listafolders[this.fname])
+                delete this.listafolders[this.fname] 
+                this.actualizatodo()
+            }else{
+                console.log('no hay cambios')
+            }
+           // delete this.listafolders[this.fname]
+
+                this.IntoFolder = false
+        },
         filteredList(p) {
             return p.filter(post => {
                 return post.nombre.toLowerCase().includes(this.search.toLowerCase())
@@ -135,16 +264,17 @@ export default {
             this.$emit("closeProyectVentana", false)
             this.LoadProyecto(it)
         },
-        muestaVentanaInfo(item, fn) {
+        muestaVentanaInfo(item, fn, pos) {
             this.IntoFolder = true
             this.muestraIntoFolder = item
             this.fname = fn
+            this.Nname= fn
+            this.indexfol=pos
+    
 
         },
         cambiaStatusCarpeta(f) {
-
             this.statusfolders[f] ? this.$set(this.statusfolders, f, false) : this.$set(this.statusfolders, f, true)
-
             this.actualizatodo()
         },
         editarPro(item) {
@@ -297,7 +427,7 @@ export default {
     watch: {
         proyectos() {
             /// funcion actualiza todo lo existente
-            this.actualizatodo()
+          //  this.actualizatodo()
         },
 
     }

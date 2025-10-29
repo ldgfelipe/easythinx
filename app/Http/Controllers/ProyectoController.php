@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\proyecto;
+use App\Models\Tareas;
 use Illuminate\Support\Facades\Auth;
 
 class ProyectoController extends Controller
@@ -62,10 +63,26 @@ class ProyectoController extends Controller
     }
 
     public function cargaproyectos(Request $request){
-        $cargarespuesta=proyecto::where('id_create','LIKE','%'.Auth::user()->email.'%')->orWhere('id_collaborate','LIKE','%'.Auth::user()->email.'%')->get();
+        $cargarespuesta=proyecto::where('id_create','LIKE','%'.Auth::user()->email.'%')
+        ->orWhere('id_collaborate','LIKE','%'.Auth::user()->email.'%')->get();
+        ////  del listado de proyecto vamos a optener las tareas y los estatus de cada tarea 
+      
+
         return response()->json($cargarespuesta);
     }
 
+    public function loadProyectoId(Request $request){
+        $cargarespuesta=proyecto::where('id',$request->id)->first();
+        return response()->json($cargarespuesta);
+    }
+
+    public function actualizatareasproyecto(Request $request){
+        $getSt=Tareas::where('id_proyecto','=',$request->id_proyecto)->select('status','id')->get();
+    
+        return response()->json($getSt);
+
+
+    }
 
 
 }
