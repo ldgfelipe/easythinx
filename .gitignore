@@ -1,6 +1,9 @@
 /node_modules
 /public/hot
 /public/storage
+/public/zipcompresor
+/public/*.zip
+/public/upload
 /storage/*.key
 /vendor
 .env
