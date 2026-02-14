@@ -1,7 +1,10 @@
 <template>
     <div>
+    
         <v-card>
             <v-card-text>
+
+             
                 <v-row>
                    <!----- <v-col cols="10">
                         <v-select
@@ -82,7 +85,7 @@
 
 
 
-                <ProyectosDragDrop @closeProyectVentana="adminproyect=event" :cabeceras="tituloproyectos" @editaproy="edtproy" ></ProyectosDragDrop>
+                <ProyectosDragDrop @closeProyectVentana="adminproyect=event" :actualizaData="actualizatodo" :cabeceras="tituloproyectos" @editaproy="edtproy" @actualizaTodoFalse="dataUpdateTodo"></ProyectosDragDrop>
 
                     <v-dialog v-model="buscadorGral">
                         <v-card>
@@ -389,7 +392,8 @@ export default {
             listaPlantillas: [],
             busquedaData:"",
             resultadoBusqueda:[],
-            tipobusca:true
+            tipobusca:true,
+            actualizatodo:false,
         };
     },
     /**
@@ -477,7 +481,9 @@ export default {
     methods: {
         ...mapMutations(["cargaProyectoSelect", "cambiaLoader"]),
         ...mapActions(["cargaProyectos", "LoadProyecto","loadProyectoId"]),
-
+        dataUpdateTodo(evt){
+            this.actualizatodo=evt
+        },
         abreProyectoBuscado(item){
             
         this.loadProyectoId(item)
@@ -609,6 +615,7 @@ export default {
             this.addproyect.notas = item.notas;
         },
         loadProyectos(id) {
+       
             var payload = {
                 acces: "data",
             };
@@ -626,11 +633,13 @@ export default {
                     }, 1500);
                 }
             });
+
             //// carga de proyecto con mapAction
             this.addproyect = {};
         },
         GuardarProyecto() {
             this.stsave = false;
+                 this.actualizatodo=true
             var parProyect = this.addproyect;
             // para que no se pierda el proyecto del creador comprueba que el correo exista dentro de los creadores si no lo agrega
 

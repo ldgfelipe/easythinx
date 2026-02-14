@@ -43,9 +43,12 @@ $request->folders [Array][archivos]
             
             // Simular archivos dentro de las subcarpetas
            foreach($subfolderName as $archivos ){
+
+           if(strpos($archivos['urlArchivo'],'://')==0){
             $fileContent = $archivos['urlArchivo'];
             $nomF=$archivos['nombre'].".".$archivos['extension'];
             File::copy(public_path($fileContent),$subfolderPath .'/'.$nomF);
+           }
            }
         }
         //archivo nombre zip
@@ -85,6 +88,24 @@ $request->folders [Array][archivos]
         return response()->json($respuesta);
     }
     
+    public function simpleDownlod(Request $request){
+
+     // Supongamos que recibes el nombre del archivo por POST
+        $fileName = $request->file;
+       
+        // Ruta dentro de storage/app/public
+        $path = public_path($fileName);
+          $nom1=explode('/',$path);
+          $nom2=$nom1[count($nom1)-1];
+        if (!file_exists($path)) {
+            return response()->json(['error' => 'Archivo no encontrado'], 404);
+        }
+
+
+        // Forzar descarga
+        return response()->download($path, $nom2);
+    }
+
     public function cleanupAfterDownload(Request $request)
     {
         $mainFolderPath = $request->main_folder;

@@ -7432,7 +7432,8 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       listaPlantillas: [],
       busquedaData: "",
       resultadoBusqueda: [],
-      tipobusca: true
+      tipobusca: true,
+      actualizatodo: false
     };
   },
   /**
@@ -7503,6 +7504,9 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
    *@property cambiaDatos() - verifica el id de proyecto sobre el cual realiza los cambios y emite el cambio al padre $emit
    */
   methods: _objectSpread(_objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapMutations)(["cargaProyectoSelect", "cambiaLoader"])), (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapActions)(["cargaProyectos", "LoadProyecto", "loadProyectoId"])), {}, {
+    dataUpdateTodo: function dataUpdateTodo(evt) {
+      this.actualizatodo = evt;
+    },
     abreProyectoBuscado: function abreProyectoBuscado(item) {
       this.loadProyectoId(item);
       this.buscadorGral = false;
@@ -7636,12 +7640,14 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
           }, 1500);
         }
       });
+
       //// carga de proyecto con mapAction
       this.addproyect = {};
     },
     GuardarProyecto: function GuardarProyecto() {
       var _this9 = this;
       this.stsave = false;
+      this.actualizatodo = true;
       var parProyect = this.addproyect;
       // para que no se pierda el proyecto del creador comprueba que el correo exista dentro de los creadores si no lo agrega
 
@@ -8517,8 +8523,17 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
     proyectos: function proyectos() {
       /// funcion actualiza todo lo existente
       //  this.actualizatodo()
+    },
+    actualizaData: function actualizaData() {
+      var _this6 = this;
+      console.log(this.actualizaData);
+      this.actualizatodo();
+      setTimeout(function () {
+        _this6.$emit('actualizaTodoFalse', false);
+      }, 1000);
     }
-  }
+  },
+  props: ['actualizaData']
 });
 
 /***/ }),
@@ -8536,6 +8551,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, defineProperty = Object.defineProperty || function (obj, key, desc) { obj[key] = desc.value; }, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return defineProperty(generator, "_invoke", { value: makeInvokeMethod(innerFn, self, context) }), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; defineProperty(this, "_invoke", { value: function value(method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; } function maybeInvokeDelegate(delegate, context) { var methodName = context.method, method = delegate.iterator[methodName]; if (undefined === method) return context.delegate = null, "throw" === methodName && delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method) || "return" !== methodName && (context.method = "throw", context.arg = new TypeError("The iterator does not provide a '" + methodName + "' method")), ContinueSentinel; var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), defineProperty(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (val) { var object = Object(val), keys = []; for (var key in object) keys.push(key); return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, "catch": function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -8560,6 +8578,59 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
   },
   computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapState)(["proyectoSelect", "userproy", "url", "csrf", "sesion", "archivos", "socket", "listauser", "configuser"])),
   methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapActions)(['validapermiso'])), {}, {
+    DescargaArchivo: function DescargaArchivo(p) {
+      var _this = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+        var nombrearchivo, response, blob, url, link;
+        return _regeneratorRuntime().wrap(function _callee$(_context) {
+          while (1) switch (_context.prev = _context.next) {
+            case 0:
+              nombrearchivo = p.nombre + '.' + p.extension;
+              _context.prev = 1;
+              _context.next = 4;
+              return fetch(_this.url + 'simpledownlod', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRF-TOKEN': _this.csrf
+                },
+                body: JSON.stringify({
+                  file: p.urlArchivo
+                }) // aquí mandas la ruta/nombre
+              });
+            case 4:
+              response = _context.sent;
+              if (response.ok) {
+                _context.next = 7;
+                break;
+              }
+              throw new Error('Error en la descarga');
+            case 7:
+              _context.next = 9;
+              return response.blob();
+            case 9:
+              blob = _context.sent;
+              // Crear URL temporal y forzar descarga
+              url = window.URL.createObjectURL(blob);
+              link = document.createElement('a');
+              link.href = url;
+              link.setAttribute('download', nombrearchivo); // nombre que quieres mostrar al descargar
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              _context.next = 22;
+              break;
+            case 19:
+              _context.prev = 19;
+              _context.t0 = _context["catch"](1);
+              console.error('Error al descargar:', _context.t0);
+            case 22:
+            case "end":
+              return _context.stop();
+          }
+        }, _callee, null, [[1, 19]]);
+      }))();
+    },
     editfolder: function editfolder(p) {
       this.folderselect = p;
       this.editfol = true;
@@ -8571,13 +8642,13 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       return btoa(p);
     },
     validapermiso: function validapermiso(data) {
-      var _this = this;
+      var _this2 = this;
       var resp = true;
       if (this.proyectoSelect.adminproy === false) {
         //// SI NO ES ADMINISTRADOR VALIDA LOS PERMISOS POR USUARIO           ///  ? item.permiso >= 1
         if (data.val.permisos !== "" && data.val.permisos !== "[object Object]") {
           var resp = JSON.parse(data.val.permisos).find(function (e) {
-            return e.usuario === _this.sesion.email;
+            return e.usuario === _this2.sesion.email;
           })[data.tp];
         } else {
           resp = true;
@@ -8588,11 +8659,11 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       return resp;
     },
     cargalistado: function cargalistado() {
-      var _this2 = this;
+      var _this3 = this;
       this.loaderlista = true;
       setTimeout(function () {
-        _this2.listado = _this2.lista;
-        _this2.loaderlista = false;
+        _this3.listado = _this3.lista;
+        _this3.loaderlista = false;
       }, 1000);
     },
     starDrag: function starDrag(event, item) {
@@ -8604,7 +8675,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       event.dataTransfer.setData('profolder', item.folder);
     },
     endrop: function endrop(event, list) {
-      var _this3 = this;
+      var _this4 = this;
       console.log(event);
       console.log(list);
       this.loaderlista = true;
@@ -8634,16 +8705,16 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
         /// guarda nueva lista a la que va
 
         //// agrega a nueva lita 
-        _this3.listado[list].push(getData);
+        _this4.listado[list].push(getData);
         //// elimina de la lista 
-        _this3.listado[prov].splice(posicion, 1);
+        _this4.listado[prov].splice(posicion, 1);
         //   this.loaderlista=false
 
         var cambioArchivo = {
           accion: "Guarda Archivo",
-          id: _this3.proyectoSelect.id
+          id: _this4.proyectoSelect.id
         };
-        _this3.socket.emit("actualiza_archivo", cambioArchivo);
+        _this4.socket.emit("actualiza_archivo", cambioArchivo);
       });
 
       /// this.$emit('updatelista',this.listado)
@@ -8652,25 +8723,25 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       this.$emit('openvisor', item);
     },
     EliminarArchivo: function EliminarArchivo(item) {
-      var _this4 = this;
-      this.loaderlista = true;
-      this.$emit('eliminaArchivo', item);
-      this.$nextTick(function () {
-        _this4.cargalistado();
-        _this4.loaderlista = false;
-      });
-    },
-    Cambiarpermisos: function Cambiarpermisos(item) {
       var _this5 = this;
       this.loaderlista = true;
-      this.$emit('cambiapermisos', item);
+      this.$emit('eliminaArchivo', item);
       this.$nextTick(function () {
         _this5.cargalistado();
         _this5.loaderlista = false;
       });
     },
-    cambianombredecarpeta: function cambianombredecarpeta() {
+    Cambiarpermisos: function Cambiarpermisos(item) {
       var _this6 = this;
+      this.loaderlista = true;
+      this.$emit('cambiapermisos', item);
+      this.$nextTick(function () {
+        _this6.cargalistado();
+        _this6.loaderlista = false;
+      });
+    },
+    cambianombredecarpeta: function cambianombredecarpeta() {
+      var _this7 = this;
       var payload = {
         id: this.folderselect.id,
         nombre: this.folderselect.nombre
@@ -8685,11 +8756,11 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       }).then(function (res) {
         return res.json();
       }).then(function (res) {
-        _this6.editfol = false | _this6.$emit('updatelista', true);
+        _this7.editfol = false | _this7.$emit('updatelista', true);
       });
     },
     EliminarCarpetaVacia: function EliminarCarpetaVacia(p) {
-      var _this7 = this;
+      var _this8 = this;
       var payload = {
         id: p.id
       };
@@ -8704,7 +8775,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
         return res.json();
       }).then(function (res) {
         console.log(res);
-        _this7.$emit('updatelista', true);
+        _this8.$emit('updatelista', true);
       });
     }
   }),
@@ -11803,13 +11874,15 @@ var render = function render() {
     staticClass: "greenD--text"
   }, [_vm._v("mdi-close")])], 1)], 1), _vm._v(" "), _c("v-card-text", [_c("ProyectosDragDrop", {
     attrs: {
+      actualizaData: _vm.actualizatodo,
       cabeceras: _vm.tituloproyectos
     },
     on: {
       closeProyectVentana: function closeProyectVentana($event) {
         _vm.adminproyect = _vm.event;
       },
-      editaproy: _vm.edtproy
+      editaproy: _vm.edtproy,
+      actualizaTodoFalse: _vm.dataUpdateTodo
     }
   }), _vm._v(" "), _c("v-dialog", {
     model: {
@@ -12987,7 +13060,12 @@ __webpack_require__.r(__webpack_exports__);
 var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("div", [_c("v-btn", {
+  return _c("div", [_vm.actualizaData ? _c("v-progress-circular", {
+    attrs: {
+      indeterminate: "",
+      color: "green"
+    }
+  }) : _vm._e(), _vm._v(" "), _c("v-btn", {
     staticClass: "greenD white--text",
     attrs: {
       title: "Agregar Folder"
@@ -13392,7 +13470,22 @@ var render = function render() {
         }
       }, [_c("v-icon", {
         staticClass: "white--text"
-      }, [_vm._v("mdi-lock")])], 1) : _vm._e()], 1) : _vm._e();
+      }, [_vm._v("mdi-lock")])], 1) : _vm._e(), _vm._v(" "), item.tipoarchivo !== "Enlace" ? _c("v-btn", {
+        staticClass: "greenD",
+        attrs: {
+          elevation: "2",
+          icon: "",
+          raised: "",
+          title: "Cambiar Permisos"
+        },
+        on: {
+          click: function click($event) {
+            return _vm.DescargaArchivo(item);
+          }
+        }
+      }, [_c("v-icon", {
+        staticClass: "white--text"
+      }, [_vm._v("mdi-download-box")])], 1) : _vm._e()], 1) : _vm._e();
     }), 0) : _vm._e(), _vm._v(" "), _vm.vistaArchivos ? _c("v-row", {
       staticClass: "drop-zone",
       on: {
@@ -13504,7 +13597,22 @@ var render = function render() {
         }
       }, [_c("v-icon", {
         staticClass: "white--text"
-      }, [_vm._v("mdi-lock")])], 1) : _vm._e()], 1)], 1)], 1);
+      }, [_vm._v("mdi-lock")])], 1) : _vm._e(), _vm._v(" "), item.tipoarchivo !== "Enlace" ? _c("v-btn", {
+        staticClass: "greenD",
+        attrs: {
+          elevation: "2",
+          icon: "",
+          raised: "",
+          title: "Cambiar Permisos"
+        },
+        on: {
+          click: function click($event) {
+            return _vm.DescargaArchivo(item);
+          }
+        }
+      }, [_c("v-icon", {
+        staticClass: "white--text"
+      }, [_vm._v("mdi-download-box")])], 1) : _vm._e()], 1)], 1)], 1);
     }), 1) : _vm._e()], 1)]);
   }), _vm._v(" "), !_vm.vistaArchivos ? _c("div", {
     staticClass: "drop-zone",
@@ -13592,7 +13700,22 @@ var render = function render() {
       }
     }, [_c("v-icon", {
       staticClass: "white--text"
-    }, [_vm._v("mdi-lock")])], 1) : _vm._e()], 1);
+    }, [_vm._v("mdi-lock")])], 1) : _vm._e(), _vm._v(" "), item.tipoarchivo !== "Enlace" ? _c("v-btn", {
+      staticClass: "greenD",
+      attrs: {
+        elevation: "2",
+        icon: "",
+        raised: "",
+        title: "Cambiar Permisos"
+      },
+      on: {
+        click: function click($event) {
+          return _vm.DescargaArchivo(item);
+        }
+      }
+    }, [_c("v-icon", {
+      staticClass: "white--text"
+    }, [_vm._v("mdi-download-box")])], 1) : _vm._e()], 1);
   })], 2) : _vm._e(), _vm._v(" "), _vm.vistaArchivos ? _c("v-row", {
     staticClass: "drop-zone",
     on: {
@@ -13737,7 +13860,22 @@ var render = function render() {
       }
     }, [_c("v-icon", {
       staticClass: "white--text"
-    }, [_vm._v("mdi-lock")])], 1) : _vm._e()], 1)], 1)], 1);
+    }, [_vm._v("mdi-lock")])], 1) : _vm._e(), _vm._v(" "), item.tipoarchivo !== "Enlace" ? _c("v-btn", {
+      staticClass: "greenD",
+      attrs: {
+        elevation: "2",
+        icon: "",
+        raised: "",
+        title: "Cambiar Permisos"
+      },
+      on: {
+        click: function click($event) {
+          return _vm.DescargaArchivo(item);
+        }
+      }
+    }, [_c("v-icon", {
+      staticClass: "white--text"
+    }, [_vm._v("mdi-download-box")])], 1) : _vm._e()], 1)], 1)], 1);
   })], 2) : _vm._e()], 2) : _vm._e()], 1);
 };
 var staticRenderFns = [];

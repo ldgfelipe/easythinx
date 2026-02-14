@@ -1,6 +1,7 @@
 <template>
     <div>
-
+   
+    <v-progress-circular v-if="actualizaData" indeterminate color="green"></v-progress-circular>
         <v-btn class="greenD white--text" @click="creacarpeta = true" title="Agregar Folder"><v-icon>mdi-plus</v-icon><v-icon>mdi-folder</v-icon>
         </v-btn>
 
@@ -421,16 +422,23 @@ export default {
             this.actualizaDatosDeSesion(payload)
             this.loaderlista = false
         }
-
-
     },
     watch: {
         proyectos() {
             /// funcion actualiza todo lo existente
           //  this.actualizatodo()
         },
+        actualizaData(){
+            console.log(this.actualizaData)
+            this.actualizatodo()
+            setTimeout(()=>{
+                this.$emit('actualizaTodoFalse',false);
+            },1000)
+            
+        }
 
-    }
+    },
+    props:['actualizaData']
 
 }
 </script>

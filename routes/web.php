@@ -76,6 +76,7 @@ Route::post('actualizaArchivos',[ArchivosController::class,'actualizaArchivos'])
 ////------compresor de archivos-------------////
 
 Route::post('zipcompresor',[CompresorController::class,'createAndDownloadZip']);
+Route::post('simpledownlod',[CompresorController::class,'simpleDownlod']);
 Route::post('cleanZipandFolder',[CompresorController::class,'cleanupAfterDownload']);
 
 ////Chats
@@ -152,3 +153,4 @@ Route::post('/updateconfigsesion',[ConfiguserController::class,'actualizaDatosde
 Route::post('/busquedagral',[BuscadorController::class,'busqueda'])->name('busquedagral');
 
 Route::get('/busquedagral',[BuscadorController::class,'busqueda'])->name('busquedagral');
+// routes/web.php o routes/api.php

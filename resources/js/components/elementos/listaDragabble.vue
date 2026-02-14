@@ -16,22 +16,7 @@
             </v-card>
 
         </v-dialog>
-      
         
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         <v-card v-if="!loaderlista">
             <div v-for="(fol, index) in folder" :key="'folder' + index">
                 <div class="container">
@@ -99,6 +84,21 @@
                                                     >mdi-lock</v-icon
                                                 >
                                             </v-btn>
+                                            <v-btn
+                                                v-if="
+                                                     item.tipoarchivo !=='Enlace'
+                                                "
+                                                class="greenD"
+                                                elevation="2"
+                                                icon
+                                                raised
+                                                title="Cambiar Permisos"
+                                                @click="DescargaArchivo(item)"
+                                            >
+                                                <v-icon class="white--text"
+                                                    >mdi-download-box</v-icon
+                                                >
+                                            </v-btn>
                         </div>
                     </div>
 
@@ -164,6 +164,25 @@
                                                     >mdi-lock</v-icon
                                                 >
                                             </v-btn>
+
+
+                                             <v-btn
+                                                v-if="
+                                                     item.tipoarchivo !=='Enlace'
+                                                "
+                                                class="greenD"
+                                                elevation="2"
+                                                icon
+                                                raised
+                                                title="Cambiar Permisos"
+                                                @click="DescargaArchivo(item)"
+                                            >
+                                                <v-icon class="white--text"
+                                                    >mdi-download-box</v-icon
+                                                >
+                                            </v-btn>
+
+
                                           </v-card-text>
 </v-card>
                                         </v-col>
@@ -221,6 +240,22 @@
                                             >
                                                 <v-icon class="white--text"
                                                     >mdi-lock</v-icon
+                                                >
+                                            </v-btn>
+
+                                            <v-btn
+                                                v-if="
+                                                      item.tipoarchivo !=='Enlace'
+                                                "
+                                                class="greenD"
+                                                elevation="2"
+                                                icon
+                                                raised
+                                                title="Cambiar Permisos"
+                                                @click="DescargaArchivo(item)"
+                                            >
+                                                <v-icon class="white--text"
+                                                    >mdi-download-box</v-icon
                                                 >
                                             </v-btn>
                 </div>
@@ -294,6 +329,22 @@
                                                     >mdi-lock</v-icon
                                                 >
                                             </v-btn>
+                                            <v-btn
+                                                v-if="
+                                                    item.tipoarchivo !=='Enlace'
+                                                
+                                                "
+                                                class="greenD"
+                                                elevation="2"
+                                                icon
+                                                raised
+                                                title="Cambiar Permisos"
+                                                @click="DescargaArchivo(item)"
+                                            >
+                                                <v-icon class="white--text"
+                                                    >mdi-download-box</v-icon
+                                                >
+                                            </v-btn>
                                            
                                         </v-card-text>
                             </v-card>
@@ -336,7 +387,37 @@ export default {
     },
     methods: {
         ...mapActions(['validapermiso']),
+         async DescargaArchivo(p) {
+           var nombrearchivo=p.nombre+'.'+p.extension;
+      try {
+        const response = await fetch(this.url+'simpledownlod', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': this.csrf
+          },
+          body: JSON.stringify({ file: p.urlArchivo }) // aquí mandas la ruta/nombre
+        });
 
+        if (!response.ok) {
+          throw new Error('Error en la descarga');
+        }
+
+        // Convertir la respuesta en blob
+        const blob = await response.blob();
+  
+        // Crear URL temporal y forzar descarga
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', nombrearchivo); // nombre que quieres mostrar al descargar
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (error) {
+        console.error('Error al descargar:', error);
+      }
+    },
         editfolder(p){
             this.folderselect=p
             this.editfol=true
